@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Classmod Beta Test - Cashmate's PUGs</title>
+  <style>
+  :root {
+    --bg: #090b0d;
+    --bg-soft: #0e1114;
+    --panel: #15191d;
+    --panel-2: #1b2025;
+    --panel-3: #20262b;
+    --line: #2e363d;
+    --line-soft: #252c32;
+    --text: #e8e8e6;
+    --muted: #a7adb1;
+    --muted-2: #7d858b;
+    --gold: #c49a3a;
+    --gold-bright: #dfb85a;
+    --red: #b84b43;
+    --red-bright: #e06a60;
+
+    /* Armor tier palette — intentionally high contrast */
+    --t3: #c69a36;      /* mustard / antique gold */
+    --t3-soft: #8a6b25;
+    --t2: #b8a77d;      /* warm beige */
+    --t2-soft: #7c6e4f;
+    --t1: #83909a;      /* cool steel gray */
+    --t1-soft: #515d66;
+
+    --radius: 8px;
+    --shadow: 0 12px 32px rgba(0, 0, 0, 0.42);
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    padding: 28px 18px;
+    background:
+      radial-gradient(circle at 50% -10%, rgba(196,154,58,0.10), transparent 36%),
+      linear-gradient(180deg, #090b0d 0%, #0b0e11 55%, #080a0c 100%);
+    color: var(--text);
+    font-family: Inter, Arial, Helvetica, sans-serif;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+    background-size: 32px 32px;
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,0.28), transparent 70%);
+  }
+
+  .container {
+    position: relative;
+    background: linear-gradient(180deg, rgba(20,24,28,0.98), rgba(12,15,18,0.98));
+    border: 1px solid #3b4349;
+    border-top: 2px solid var(--gold);
+    border-radius: 12px;
+    padding: 22px;
+    max-width: 1080px;
+    width: 100%;
+    margin: 0 auto;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.58), 0 0 0 1px rgba(255,255,255,0.02) inset;
+  }
+
+  .container::after {
+    content: "";
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 10px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(196,154,58,0.28), transparent);
+  }
+
+  /* URGENCY HEADER */
+  .urgent-banner {
+    background: linear-gradient(135deg, rgba(99,28,25,0.58), rgba(48,21,20,0.50));
+    border: 1px solid rgba(224,106,96,0.55);
+    border-left: 4px solid var(--red-bright);
+    border-radius: var(--radius);
+    padding: 11px 15px;
+    margin-bottom: 18px;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.25);
+  }
+
+  .urgent-banner h2 {
+    color: #fff;
+    margin: 0;
+    font-size: 1.05em;
+    text-transform: uppercase;
+    letter-spacing: 1.3px;
+  }
+
+  .urgent-banner p {
+    color: #e6b8b4;
+    margin: 5px 0 0;
+    font-weight: 600;
+    font-size: 0.90em;
+  }
+
+  .sub-heading {
+    color: #8f969b;
+    font-size: 0.78em;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-top: 4px;
+  }
+
+  h1 {
+    color: #f1d08a;
+    margin: 3px 0 16px;
+    font-size: clamp(2em, 5vw, 2.8em);
+    line-height: 1.05;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    text-shadow: 0 2px 16px rgba(196,154,58,0.20);
+  }
+
+  /* QUICK START */
+  .steps-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 16px 0 18px;
+  }
+
+  .step-card {
+    position: relative;
+    background: linear-gradient(180deg, #1a1f24, #13171b);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 14px;
+    text-align: left;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+
+  .step-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-bright));
+  }
+
+  .step-card.danger::before {
+    background: linear-gradient(90deg, var(--red), var(--red-bright));
+  }
+
+  .step-number {
+    font-size: 0.76em;
+    font-weight: 800;
+    color: var(--gold-bright);
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    margin-bottom: 6px;
+  }
+
+  .step-card.danger .step-number { color: var(--red-bright); }
+
+  .step-card h3 {
+    margin: 0 0 6px;
+    color: #fff;
+    font-size: 0.98em;
+  }
+
+  .step-card p {
+    margin: 0;
+    font-size: 0.86em;
+    color: #c3c8cb;
+    line-height: 1.45;
+  }
+
+  /* ─── Parenthetical text styling ─── */
+  .parenthetical {
+    font-size: 0.82em;
+    color: #8a9299;
+    font-style: italic;
+  }
+
+  /* GENERAL BOX */
+  .box {
+    text-align: left;
+    background: linear-gradient(180deg, #181d21, #14181c);
+    padding: 17px 18px;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--gold);
+    border-radius: var(--radius);
+    margin: 18px 0;
+    box-shadow: var(--shadow);
+  }
+
+  .box h2 {
+    color: #f0f1ef;
+    margin: 0;
+    font-size: 1.08em;
+    border-bottom: 1px solid var(--line-soft);
+    padding-bottom: 8px;
+    letter-spacing: 0.2px;
+  }
+
+  .box ul {
+    margin: 9px 0 0;
+    padding-left: 19px;
+  }
+
+  .box li {
+    margin-bottom: 7px;
+    color: #b7bdc1;
+    font-size: 0.92em;
+    line-height: 1.45;
+  }
+
+  /* TIER GRID */
+  .tier-columns {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 13px;
+    margin-top: 12px;
+  }
+
+  .tier-column {
+    background: linear-gradient(180deg, #171c20, #101418);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    overflow: visible !important;
+  }
+
+  /* Distinct tier headers */
+  .column-header {
+    position: relative;
+    font-size: 0.93em;
+    font-weight: 800;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--line);
+    padding: 2px 5px 9px;
+    margin-bottom: 10px;
+    text-align: center;
+    letter-spacing: 0.8px;
+  }
+
+  .column-header.heavy { color: var(--t3); }
+  .column-header.medium { color: var(--t2); }
+  .column-header.light { color: #aab5bd; }
+
+  .column-header.heavy::after,
+  .column-header.medium::after,
+  .column-header.light::after {
+    content: "";
+    display: block;
+    width: 42%;
+    height: 2px;
+    margin: 7px auto -11px;
+    border-radius: 999px;
+  }
+  .column-header.heavy::after { background: var(--t3); }
+  .column-header.medium::after { background: var(--t2); }
+  .column-header.light::after { background: var(--t1); }
+
+  /* Armor legend */
+  .armor-legend {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 12px;
+  }
+
+  .armor-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 9px;
+    border: 1px solid var(--line-soft);
+    border-radius: 999px;
+    background: #101417;
+    color: #c7cccf;
+    font-size: 0.76em;
+    font-weight: 700;
+    letter-spacing: 0.35px;
+  }
+
+  .armor-swatch {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    box-shadow: 0 0 8px currentColor;
+  }
+  .armor-swatch.t3 { color: var(--t3); background: var(--t3); }
+  .armor-swatch.t2 { color: var(--t2); background: var(--t2); }
+  .armor-swatch.t1 { color: var(--t1); background: var(--t1); }
+
+  /* WEAPON ITEM CARDS */
+  .weapon-item {
+    position: relative;
+    z-index: 1;
+    background: linear-gradient(180deg, #20262b, #191e22);
+    padding: 9px 10px;
+    border: 1px solid #2c343a;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    text-align: left;
+    cursor: pointer;
+    transition: transform .15s ease, background-color .15s ease, border-color .15s ease, box-shadow .15s ease;
+    overflow: visible !important;
+  }
+
+  .weapon-item:hover {
+    z-index: 9999;
+    transform: translateY(-1px);
+    background: linear-gradient(180deg, #252c31, #1c2226);
+    border-color: #404a52;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.28);
+  }
+
+  .tier-column.heavy-col .weapon-item { border-left: 3px solid var(--t3-soft); }
+  .tier-column.medium-col .weapon-item { border-left: 3px solid var(--t2-soft); }
+  .tier-column.light-col .weapon-item { border-left: 3px solid var(--t1-soft); }
+
+  .weapon-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .weapon-name {
+    color: #f4f4f3;
+    font-weight: 700;
+    font-size: 0.94em;
+  }
+
+  /* ARMOR BADGES */
+  .armor-badge {
+    font-size: 0.83em;
+    padding: 4px 7px;
+    border-radius: 5px;
+    background: #101214;
+    border: 1px solid #3a4248;
+    font-weight: 800;
+    letter-spacing: 1px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    white-space: nowrap;
+  }
+
+  .a3 { color: var(--t3); }
+  .a2 { color: var(--t2); }
+  .a1 { color: var(--t1); }
+
+  .weapon-extras {
+    font-size: 0.78em;
+    color: #9da5aa;
+    margin-top: 4px;
+  }
+
+  /* ─── TOOLTIP – BELOW, HIGH Z-INDEX, NO OVERLAP ─── */
+  .weapon-item .tooltip {
+    visibility: hidden;
+    opacity: 0;
+    width: min(410px, calc(100vw - 36px));
+    background: linear-gradient(180deg, #101316, #0d1013);
+    color: #e0e3e4;
+    text-align: left;
+    border-radius: 8px;
+    padding: 11px 12px;
+    position: absolute;
+    z-index: 100000;
+    top: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    transition: opacity .15s ease, visibility .15s ease, transform .15s ease;
+    border: 1px solid #4a535a;
+    font-size: 0.86em;
+    box-shadow: 0 16px 36px rgba(0,0,0,0.78);
+    pointer-events: none;
+  }
+
+  .weapon-item:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .weapon-item .tooltip::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: -6px;
+    width: 10px;
+    height: 10px;
+    background: #0d1013;
+    border-left: 1px solid #4a535a;
+    border-top: 1px solid #4a535a;
+    transform: translateX(-50%) rotate(45deg);
+  }
+
+  .tier-column.heavy-col .weapon-item .tooltip {
+    left: 0;
+    transform: translateX(0) translateY(4px);
+  }
+  .tier-column.heavy-col .weapon-item:hover .tooltip {
+    transform: translateX(0) translateY(0);
+  }
+  .tier-column.heavy-col .weapon-item .tooltip::after {
+    left: 18px;
+    transform: rotate(45deg);
+  }
+
+  .tier-column.light-col .weapon-item .tooltip {
+    left: auto;
+    right: 0;
+    transform: translateX(0) translateY(4px);
+  }
+  .tier-column.light-col .weapon-item:hover .tooltip {
+    transform: translateX(0) translateY(0);
+  }
+  .tier-column.light-col .weapon-item .tooltip::after {
+    left: auto;
+    right: 18px;
+    transform: rotate(45deg);
+  }
+
+  .tooltip-title {
+    color: #e4c678;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 0.95em;
+    letter-spacing: 0.4px;
+  }
+
+  .tooltip-legend {
+    color: #969ea4;
+    font-size: 0.79em;
+    border-bottom: 1px solid #293036;
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+  }
+
+  .tooltip-legend span { margin-right: 8px; }
+
+  .tables-wrapper {
+    display: flex;
+    gap: 9px;
+    margin-top: 6px;
+  }
+
+  .dmg-table {
+    width: 50%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid #343d44;
+    border-radius: 6px;
+    background-color: #121619;
+    font-size: 0.86em;
+    overflow: hidden;
+  }
+
+  .dmg-table th {
+    color: #d7b662;
+    background-color: #1a2024;
+    border-bottom: 1px solid #343d44;
+    padding: 6px 4px;
+    font-size: 0.86em;
+    text-align: center;
+    font-weight: 800;
+  }
+
+  .dmg-table td {
+    padding: 5px 4px;
+    text-align: center;
+    border-bottom: 1px solid #242b30;
+  }
+
+  .dmg-table tr:last-child td { border-bottom: none; }
+
+  .dmg-table td.attack-label {
+    text-align: left;
+    color: #c4c9cc;
+    font-weight: 700;
+    font-size: 0.86em;
+    padding-left: 6px;
+    white-space: nowrap;
+  }
+
+  .dmg-1 { color: #ff4d4d; font-weight: bold; }
+  .dmg-2 { color: #ffeb3b; font-weight: bold; }
+  .dmg-3 { color: #4caf50; font-weight: bold; }
+  .dmg-4 { color: #888888; }
+
+  .tooltip-notes {
+    margin-top: 8px;
+    color: #b9a98a;
+    font-size: 0.83em;
+    font-style: italic;
+  }
+
+  /* FOOTER / DISCORD */
+  .discord-btn {
+    display: inline-block;
+    background: linear-gradient(180deg, #6671f3, #4f59cf);
+    color: #fff;
+    padding: 10px 20px;
+    text-decoration: none;
+    font-weight: 800;
+    border-radius: 6px;
+    margin-top: 5px;
+    font-size: 0.92em;
+    box-shadow: 0 8px 20px rgba(67,74,180,0.28);
+    transition: transform .15s ease, filter .15s ease;
+  }
+
+  .discord-btn:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.07);
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 820px) {
+    .steps-container,
+    .tier-columns { grid-template-columns: 1fr; }
+    .container { padding: 17px; }
+
+    .weapon-item .tooltip,
+    .tier-column.heavy-col .weapon-item .tooltip,
+    .tier-column.light-col .weapon-item .tooltip {
+      width: min(410px, calc(100vw - 44px)) !important;
+      left: 50%;
+      right: auto;
+      transform: translateX(-50%) translateY(4px);
+    }
+
+    .weapon-item:hover .tooltip,
+    .tier-column.heavy-col .weapon-item:hover .tooltip,
+    .tier-column.light-col .weapon-item:hover .tooltip {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .weapon-item .tooltip::after,
+    .tier-column.heavy-col .weapon-item .tooltip::after,
+    .tier-column.light-col .weapon-item .tooltip::after {
+      left: 50% !important;
+      right: auto !important;
+      transform: translateX(-50%) rotate(45deg) !important;
+    }
+  }
+
+  @media (max-width: 540px) {
+    body { padding: 10px; }
+    .container { padding: 13px; border-radius: 9px; }
+    h1 { font-size: 1.65em; }
+    .tables-wrapper { flex-direction: column; }
+    .dmg-table { width: 100%; }
+    .armor-legend-item { font-size: 0.72em; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- URGENCY BANNER -->
+    <div class="urgent-banner">
+      <h2>🛑 READ BEFORE SELECTING LOADOUT 🛑</h2>
+      <p>This server runs a custom class mod. Standard loadouts DO NOT WORK here.</p>
+    </div>
+
+    <div class="sub-heading">Cashmate's PUGs</div>
+    <h1>Classmod Beta<em class="parenthetical">  v0.1</em></h1>
+
+    <!-- 3-STEP QUICK START GUIDE -->
+    <div class="steps-container">
+      <div class="step-card">
+        <div class="step-number">Step 1</div>
+        <h3>Include a Roster Weapon</h3>
+        <p>Your custom loadout <strong>MUST</strong> contain one weapon from the approved roster below.</p>
+      </div>
+
+      <!-- ─── STEP 2 – with smaller grey parenthetical ─── -->
+      <div class="step-card">
+        <div class="step-number">Step 2</div>
+        <h3>Auto-Assigned on Spawn</h3>
+        <p>
+          Your armor tiers, secondary weapons, and perks are automatically applied on spawn.
+        </p>
+        <p>
+          <em class="parenthetical">(Your saved loadouts on your account remain completely untouched.)</em>
+        </p>
+      </div>
+
+      <div class="step-card danger">
+        <div class="step-number">⚠️ Danger Step</div>
+        <h3>Spawning Naked</h3>
+        <p>Spawning <strong>WITHOUT</strong> an approved roster weapon in your loadout will leave you completely naked!</p>
+      </div>
+    </div>
+
+    <!-- WEAPON ROSTER BY ARMOR COLUMNS -->
+    <div class="box">
+      <h2>Class Roster</h2>
+      <p style="margin: 0 0 10px 0; font-size: 0.85em; color: #888888; font-style: italic;">Hover over any class to view damage values & descriptions.</p>
+      
+      <div class="armor-legend" aria-label="Armor tier color legend">
+        <span class="armor-legend-item"><span class="armor-swatch t3"></span>T3 · Heavy</span>
+        <span class="armor-legend-item"><span class="armor-swatch t2"></span>T2 · Medium</span>
+        <span class="armor-legend-item"><span class="armor-swatch t1"></span>T1 · Light</span>
+      </div>
+
+      <div class="tier-columns">
+        
+        <!-- HEAVY COLUMN (3-3-3 & 2-3-3) -->
+        <div class="tier-column heavy-col">
+          <div class="column-header heavy">Heavy</div>
+
+          <!-- GREATSWORD -->
+          <div class="weapon-item">
+            <div class="weapon-header-row">
+              <span class="weapon-name">Greatsword</span>
+              <div class="armor-badge">
+                <span class="a3">3</span>-<span class="a3">3</span>-<span class="a3">3</span>
+              </div>
+            </div>
+            <div class="weapon-extras">+ Shortsword</div>
+            <div class="tooltip">
+              <div class="tooltip-title">Greatsword Damage</div>
+              <div class="tooltip-legend">
+                <span class="dmg-1">1HTK</span>
+                <span class="dmg-2">2HTK</span>
+                <span class="dmg-3">3HTK</span>
+                <span class="dmg-4">4HTK+</span>
+              </div>
+              <div class="tables-wrapper">
+                <table class="dmg-table">
+                  <thead>
+                    <tr>
+                      <th style="text-align:left; padding-left: 6px;">Strike</th>
+                      <th>T3</th>
+                      <th>T2</th>
+                      <th>T1</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="attack-label">Head</td>
+                      <td><span class="dmg-2">52</span></td>
+                      <td><span class="dmg-2">60</span></td>
+                      <td><span class="dmg-2">70</span></td>
+                    </tr>
+                    <tr>
+                      <td class="attack-label">Body</td>
+                      <td><span class="dmg-3">36</span></td>
+                      <td><span class="dmg-3">38</span></td>
+                      <td><span class="dmg-2">52</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <table class="dmg-table">
+                  <thead>
+                    <tr>
+                      <th style="text-align:left; padding-left: 6px;">Stab</th>
+                      <th>T3</th>
+                      <th>T2</th>
+                      <th>T1</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="attack-label">Head</td>
+                      <td><span class="dmg-2">52</span></td>
+                      <td><span class="dmg-2">60</span></td>
+                      <td><span class="dmg-2">70</span></td>
+                    </tr>
+                    <tr>
+                      <td class="attack-label">Body</td>
+                      <td><span class="dmg-3">36</span></td>
+                      <td><span class="dmg-3">38</span></td>
+                      <td><span class="dmg-2">52</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="tooltip-notes">Head+Head kills T3. Head+Body leaves T2 with 2 HP.</div>
+            </div>
+          </div>
+
+          <!-- LONGSWORD -->
+          <div class="weapon-item">
+            <div class="weapon-header-row">
+              <span class="weapon-name">Longsword</span>
+              <div class="armor-badge">
+                <span class="a2">2</span>-<span class="a3">3</span>-<span class="a3">3</span>
+              </div>
+            </div>
+            <div class="weapon-extras">+ Cleaver | Fury, Second Wind</div>
+            <div class="tooltip">
+              <div class="tooltip-title">Longsword Damage</div>
+              <div class="tooltip-legend">
+                <span class="dmg-1">1HTK</span>
+                <span class="dmg-2">2HTK</span>
+                <span class="dmg-3">3HTK</span>
+                <span class="dmg-4">4HTK+</span>
+              </div>
+              <div class="tables-wrapper">
+                <table class="dmg-table">
+                  <thead>
+                    <tr>
+                      <th style="text-align:left; padding-left: 6px;">Strike</th>
+                      <th>T3</th>
+                      <th>T2</th>
+                      <th>T1</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="attack-label">Head</td>
+                      <td><span class="dmg-2">52</span></td>
+                      <td><span class="dmg-2">55</span></td>
+                      <td><span class="dmg-2">70</span></td>
+                    </tr>
+                    <tr>
+                      <td class="attack-label">Body</td>
+                      <td><span class="dmg-3">36</span></td>
+                      <td><span class="dmg-3">40</span></td>
+                      <td><span class="dmg-2">52</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <table class="dmg-table">
+                  <thead>
+                    <tr>
+                      <th style="text-align:left; padding-left: 6px;">Stab</th>
+                      <th>T3</th>
+                      <th>T2</th>
+                      <th>T1</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="attack-label">Head</td>
+                      <td><span class="dmg-2">52</span></td>
+                      <td><span class="dmg-2">55</span></td>
+                      <td><span class="dmg-2">70</span></td>
+                    </tr>
+                    <tr>
+                      <td class="attack-label">Body</td>
+                      <td><span class="dmg-3">36</span></td>
+                      <td><span class="dmg-3">40</span></td>
+                      <td><span class="dmg-2">52</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- BARDICHE -->
+          <div class="weapon-item">
+            <div class="weapon-header-row">
+              <span class="weapon-name">Bardiche</span>
+              <div class="armor-badge">
+                <span class="a2">2</span>-<span class="a3">3</span>-<span class="a3">3</span>
+              </div>
+            </div>
+            <div class="tooltip">
+              <div class="tooltip-title">Bardiche Damage</div>
+              <div class="tooltip-legend">
+                <span class="dmg-1">1HTK</span>
+                <span class="dmg-2">2HTK</span>
+                <span class="dmg-3">3HTK</span>
+                <span class="dmg-4">4HTK+</span>
+              </div>
+              <div class="tables-wrapper">
+                <table class="dmg-table">
+                  <thead>
+                    <tr>
+                      <th style="text-align:left; padding-left: 6px;">Strike</th>
+                      <th>T3</th>
+                      <th>T2</th>
+                      <th>T1</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="attack-label">Head</td>
+                      <td><span class="dmg-2">60</span></td>
+                      <td><span class="dmg-2">70</span></td>
+                      <td><span class="dmg-1">100</span></td>
+                    </tr>
+                    <tr>
+                      <td class="attack-label">Body</td>
+                      <td><span class="dmg-3">40</span></td>
+                      <td><span class="dmg-2">50</span></td>
+                      <td><span class="dmg-2">60</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <table class="dmg-table">
+                  <thead>
+                    <tr>
+                      <th style="text-align:left; padding-left: 6px;">Stab</th>
+                      <th>T3</th>
+                      <th>T2</th>
+                      <th>T1</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="attack-label">Head</td>
+                      <td><span class="dmg-4">30</span></td>
+                      <td><span class="dmg-3">35</span></td>
+                      <td><span class="dmg-3">40</span></td>
+                    </tr>
+                    <tr>
+                      <td class="attack-label">Body</td>
+                      <td><span class="dmg-4">25</span></td>
+                      <td><span class="dmg-4">30</span></td>
+                      <td><span class="dmg-3">35</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="tooltip-notes">Head 1-shots T1. Head+Body kills T3. Body+Body kills T2.</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- MEDIUM COLUMN (2-2-2 & 2-3-3) -->
+        <div class="tier-column medium-col">
+          <div class="column-header medium">Medium</div>
+
+          <!-- SPEAR -->
+          <div class="weapon-item">
+            <div class="weapon-header-row">
+              <span class="weapon-name">Spear</span>
+              <div class="armor-badge">
+                <span class="a2">2</span>-<span class="a3">3</span>-<span class="a3">3</span>
+              </div>
+            </div>
+            <div class="weapon-extras">+ Shortsword, Firepot, Second Wind</div>
+            <div class="tooltip">
+              <div class="tooltip-title">Spear Damage</div>
+              <div class="tooltip-legend">
+                <span class="dmg-1">1HTK</span>
+                <span class="dmg-2">2HTK</span>
+                <span class="dmg-3">3HTK</span>
+                <span class="dmg-4">4HTK+</span>
+              </div>
+              <div class="tables-wrapper">
+                <table class="dmg-table">
+                  <thead>
+                    <tr>
+                      <th style="text-align:left; padding-left: 6px;">Strike</th>
+                      <th>T3</th>
+                      <th>T2</th>
+                      <th>T1</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="attack-label">Head</td>
+                      <td><span class="dmg-4">32</span></td>
+                      <td><span class="dmg-3">35</span></td>
+                      <td><span class="dmg-3">45</span></td>
+                    </tr>
+                    <tr>
+                      <td class="attack-label">Body</td>
+                      <td><span class="dmg-4">17</span></td>
+                      <td><span class="dmg-4">23</span></td>
+                      <td><span class="dmg-4">30</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <table class="dmg-table">
+                  <thead>
+                    <tr>
+                      <th style="text-align:left; padding-left: 6px;">Stab</th>
+                      <th>T3</th>
+                      <th>T2</th>
+                      <th>T1</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="attack-label">Head</td>
+                      <td><span class="dmg-2">52</span></td>
+                      <td><span class="dmg-2">60</span></td>
+                      <td><span class="dmg-2">85</span></td>
+                    </tr>
+                    <tr>
+                      <td class="attack-label">Body</td>
+                      <td><span class="dmg-3">36</span></td>
+                      <td><span class="dmg-3">38</span></td>
+                      <td><span class="dmg-2">52</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="tooltip-notes">Head+Head kills T3. Body+Body stabs leave T2 with 24 HP.</div>
+            </div>
+          </div>
+
+          <!-- EVENINGSTAR -->
+          <div class="weapon-item">
+            <div class="weapon-header-row">
+              <span class="weapon-name">Eveningstar</span>
+              <div class="armor-badge">
+                <span class="a2">2</span>-<span class="a2">2</span>-<span class="a2">2</span>
+              </div>
+            </div>
+            <div class="tooltip">
+              <div class="tooltip-title">Eveningstar Damage</div>
+              <div class="tooltip-legend">
+                <span class="dmg-1">1HTK</span>
+                <span class="dmg-2">2HTK</span>
+                <span class="dmg-3">3HTK</span>
+                <span class="dmg-4">4HTK+</span>
+              </div>
+              <div class="tables-wrapper">
+                <table class="dmg-table">
+                  <thead>
+                    <tr>
+                      <th style="text-align:left; padding-left: 6px;">Strike</th>
+                      <th>T3</th>
+                      <th>T2</th>
+                      <th>T1</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="attack-label">Head</td>
+                      <td><span class="dmg-2">60</span></td>
+                      <td><span class="dmg-2">70</span></td>
+                      <td><span class="dmg-2">90</span></td>
+                    </tr>
+                    <tr>
+                      <td class="attack-label">Body</td>
+                      <td><span class="dmg-2">50</span></td>
+                      <td><span class="dmg-2">60</span></td>
+                      <td><span class="dmg-2">70</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <table class="dmg-table">
+                  <thead>
+                    <tr>
+                      <th style="text-align:left; padding-left: 6px;">Stab</th>
+                      <th>T3</th>
+                      <th>T2</th>
+                      <th>T1</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="attack-label">Head</td>
+                      <td><span class="dmg-4">30</span></td>
+                      <td><span class="dmg-3">35</span></td>
+                      <td><span class="dmg-3">40</span></td>
+                    </tr>
+                    <tr>
+                      <td class="attack-label">Body</td>
+                      <td><span class="dmg-4">25</span></td>
+                      <td><span class="dmg-4">30</span></td>
+                      <td><span class="dmg-3">35</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="tooltip-notes">2-shots everything with strikes (Body+Body kills T3). Does NOT 1-shot T1 head.</div>
+            </div>
+          </div>
+
+          <!-- HALBERD -->
+          <div class="weapon-item">
+            <div class="weapon-header-row">
+              <span class="weapon-name">Halberd</span>
+              <div class="armor-badge">
+                <span class="a2">2</span>-<span class="a2">2</span>-<span class="a2">2</span>
+              </div>
+            </div>
+            <div class="tooltip">
+              <div class="tooltip-title">Halberd Damage</div>
+              <div class="tooltip-legend">
+                <span class="dmg-1">1HTK</span>
+                <span class="dmg-2">2HTK</span>
+                <span class="dmg-3">3HTK</span>
+                <span class="dmg-4">4HTK+</span>
+              </div>
+              <div class="tables-wrapper">
+                <table class="dmg-table">
+                  <thead>
+                    <tr>
+                      <th style="text-align:left; padding-left: 6px;">Strike</th>
+                      <th>T3</th>
+                      <th>T2</th>
+                      <th>T1</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="attack-label">Head</td>
+                      <td><span class="dmg-2">60</span></td>
+                      <td><span class="dmg-2">70</span></td>
+                      <td><span class="dmg-1">100</span></td>
+                    </tr>
+                    <tr>
+                      <td class="attack-label">Body</td>
+                      <td><span class="dmg-3">40</span></td>
+                      <td><span class="dmg-2">60</span></td>
+                      <td><span class="dmg-2">80</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <table class="dmg-table">
+                  <thead>
+                    <tr>
+                      <th style="text-align:left; padding-left: 6px;">Stab</th>
+                      <th>T3</th>
+                      <th>T2</th>
+                      <th>T1</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="attack-label">Head</td>
+                      <td><span class="dmg-2">50</span></td>
+                      <td><span class="dmg-2">52</span></td>
+                      <td><span class="dmg-2">75</span></td>
+                    </tr>
+                    <tr>
+                      <td class="attack-label">Body</td>
+                      <td><span class="dmg-3">35</span></td>
+                      <td><span class="dmg-3">45</span></td>
+                      <td><span class="dmg-2">60</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="tooltip-notes">Head 1-shots T1. Body+Head kills T3. Body+Body kills T2.</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- LIGHT COLUMN (1-2-2 & 1-1-1) -->
+        <div class="tier-column light-col">
+          <div class="column-header light">Light</div>
+
+          <!-- EXECUTIONER'S SWORD -->
+          <div class="weapon-item">
+            <div class="weapon-header-row">
+              <span class="weapon-name">Executioner's</span>
+              <div class="armor-badge">
+                <span class="a1">1</span>-<span class="a2">2</span>-<span class="a2">2</span>
+              </div>
+            </div>
+            <div class="tooltip">
+              <div class="tooltip-title">Executioner's Damage</div>
+              <div class="tooltip-legend">
+                <span class="dmg-1">1HTK</span>
+                <span class="dmg-2">2HTK</span>
+                <span class="dmg-3">3HTK</span>
+                <span class="dmg-4">4HTK+</span>
+              </div>
+              <div class="tables-wrapper">
+                <table class="dmg-table">
+                  <thead>
+                    <tr>
+                      <th style="text-align:left; padding-left: 6px;">Strike</th>
+                      <th>T3</th>
+                      <th>T2</th>
+                      <th>T1</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="attack-label">Head</td>
+                      <td><span class="dmg-2">60</span></td>
+                      <td><span class="dmg-2">70</span></td>
+                      <td><span class="dmg-1">100</span></td>
+                    </tr>
+                    <tr>
+                      <td class="attack-label">Body</td>
+                      <td><span class="dmg-2">50</span></td>
+                      <td><span class="dmg-2">60</span></td>
+                      <td><span class="dmg-2">70</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <table class="dmg-table">
+                  <thead>
+                    <tr>
+                      <th style="text-align:left; padding-left: 6px;">Stab</th>
+                      <th>T3</th>
+                      <th>T2</th>
+                      <th>T1</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="attack-label">Head</td>
+                      <td><span class="dmg-4">25</span></td>
+                      <td><span class="dmg-4">30</span></td>
+                      <td><span class="dmg-3">40</span></td>
+                    </tr>
+                    <tr>
+                      <td class="attack-label">Body</td>
+                      <td><span class="dmg-4">20</span></td>
+                      <td><span class="dmg-4">25</span></td>
+                      <td><span class="dmg-3">35</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="tooltip-notes">Head 1-shots T1. Body+Body kills T3.</div>
+            </div>
+          </div>
+
+          <!-- MAUL -->
+          <div class="weapon-item">
+            <div class="weapon-header-row">
+              <span class="weapon-name">Maul</span>
+              <div class="armor-badge">
+                <span class="a1">1</span>-<span class="a2">2</span>-<span class="a2">2</span>
+              </div>
+            </div>
+            <div class="weapon-extras">+ Shortsword | Rush</div>
+            <div class="tooltip">
+              <div class="tooltip-title">Maul Damage</div>
+              <div class="tooltip-legend">
+                <span class="dmg-1">1HTK</span>
+                <span class="dmg-2">2HTK</span>
+                <span class="dmg-3">3HTK</span>
+                <span class="dmg-4">4HTK+</span>
+              </div>
+              <div class="tables-wrapper">
+                <table class="dmg-table">
+                  <thead>
+                    <tr>
+                      <th style="text-align:left; padding-left: 6px;">Strike</th>
+                      <th>T3</th>
+                      <th>T2</th>
+                      <th>T1</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="attack-label">Head</td>
+                      <td><span class="dmg-1">100</span></td>
+                      <td><span class="dmg-1">100</span></td>
+                      <td><span class="dmg-1">100</span></td>
+                    </tr>
+                    <tr>
+                      <td class="attack-label">Body</td>
+                      <td><span class="dmg-2">70</span></td>
+                      <td><span class="dmg-2">80</span></td>
+                      <td><span class="dmg-2">90</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <table class="dmg-table">
+                  <thead>
+                    <tr>
+                      <th style="text-align:left; padding-left: 6px;">Stab</th>
+                      <th>T3</th>
+                      <th>T2</th>
+                      <th>T1</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="attack-label">Head</td>
+                      <td><span class="dmg-4">30</span></td>
+                      <td><span class="dmg-3">35</span></td>
+                      <td><span class="dmg-3">40</span></td>
+                    </tr>
+                    <tr>
+                      <td class="attack-label">Body</td>
+                      <td><span class="dmg-4">25</span></td>
+                      <td><span class="dmg-4">30</span></td>
+                      <td><span class="dmg-3">35</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="tooltip-notes">1-shots Head across ALL armor tiers.</div>
+            </div>
+          </div>
+
+          <!-- ESTOC -->
+          <div class="weapon-item">
+            <div class="weapon-header-row">
+              <span class="weapon-name">Estoc</span>
+              <div class="armor-badge">
+                <span class="a1">1</span>-<span class="a1">1</span>-<span class="a1">1</span>
+              </div>
+            </div>
+            <div class="tooltip">
+              <div class="tooltip-title">Estoc Damage</div>
+              <div class="tooltip-legend">
+                <span class="dmg-1">1HTK</span>
+                <span class="dmg-2">2HTK</span>
+                <span class="dmg-3">3HTK</span>
+                <span class="dmg-4">4HTK+</span>
+              </div>
+              <div class="tables-wrapper">
+                <table class="dmg-table">
+                  <thead>
+                    <tr>
+                      <th style="text-align:left; padding-left: 6px;">Strike</th>
+                      <th>T3</th>
+                      <th>T2</th>
+                      <th>T1</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="attack-label">Head</td>
+                      <td><span class="dmg-4">32</span></td>
+                      <td><span class="dmg-3">35</span></td>
+                      <td><span class="dmg-3">45</span></td>
+                    </tr>
+                    <tr>
+                      <td class="attack-label">Body</td>
+                      <td><span class="dmg-4">17</span></td>
+                      <td><span class="dmg-4">23</span></td>
+                      <td><span class="dmg-4">30</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <table class="dmg-table">
+                  <thead>
+                    <tr>
+                      <th style="text-align:left; padding-left: 6px;">Stab</th>
+                      <th>T3</th>
+                      <th>T2</th>
+                      <th>T1</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="attack-label">Head</td>
+                      <td><span class="dmg-2">52</span></td>
+                      <td><span class="dmg-2">60</span></td>
+                      <td><span class="dmg-2">85</span></td>
+                    </tr>
+                    <tr>
+                      <td class="attack-label">Body</td>
+                      <td><span class="dmg-3">36</span></td>
+                      <td><span class="dmg-3">40</span></td>
+                      <td><span class="dmg-2">52</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="tooltip-notes">Head+Head kills T3. Head+Body kills T2.</div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+      <p style="margin-top: 12px; margin-bottom: 0; font-size: 0.85em; color: #777777; text-align: center;"><em>More classes to come.</em></p>
+    </div>
+
+    <!-- BALANCE & MOD INFO -->
+    <div class="box">
+      <h2 onclick="toggleWhy()" style="cursor: pointer;">Why use a class mod? <em class="parenthetical">(Click to expand)</em></h2>
+      <div id="why-content" style="display: none;">
+        <ul>
+          <li><strong>Overcoming Native Point Restrictions:</strong> In vanilla Mordhau, loadout points can only limit weapons to lighter armor by making them expensive—there is no mechanic to enforce heavy armor requirements on heavy weapons. The class mod enforces true archetype roles similar to Chivalry 1.</li>
+          <li><strong>Enabling Underutilized Equipment & Perks:</strong> Protection and armor values almost always outweigh utility in vanilla play. When given free rein over point budgets, players consistently prioritize maxing armor over utility. By hard-setting armor baselines, loadouts naturally open up dedicated space for secondaries and perks without sacrificing survivability.</li>
+          <li><strong>Promoting Weapon Variety & Stopping Power Creep:</strong> Competitive teams naturally converge on singular "meta" weapons (typically consistent 2HTK options). The traditional "fix" is buffing 3HTK weapons until they compete, leading to aggressive overall power creep. Class-based restrictions isolate weapon balance within specific armor brackets, encouraging diverse team compositions without inflating average lethality.</li>
+          <li><strong>Consistent Time-to-Kill (HTK):</strong> When players min-max hybrid setups (like 1-3-2), developers are forced to inflate damage against light armor just to keep heavy armor in check. This creates volatile, frustrating combat where "light" players either get instakilled (headshot) or tank the same damage as a "heavy" player would (bodyshot). Fixed class loadouts keep damage scaling predictable and fair.</li>
+          <li><strong>Unified Hitboxes:</strong> Body and Leg damage are unified into a single multiplier, streamlining damage calculation and keeping combat focused on headshots and body hits.</li>
+          <li><strong>Cashmod Foundation:</strong> Built on <strong>Cashmod</strong> as a baseline, with tweaks specifically made with classes in mind.</li>
+        </ul>
+      </div>
+    </div>
+
+    <a href="https://discord.gg/YOUR_INVITE_CODE" class="discord-btn" target="_blank">Join Discord & Feedback</a>
+  </div>
+
+  <script>
+    function toggleWhy() {
+      var content = document.getElementById('why-content');
+      if (content.style.display === 'none') {
+        content.style.display = 'block';
+      } else {
+        content.style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html>
