@@ -1,0 +1,6 @@
+# Working/debug files: CDO exports, diagnostics, hand-tuning source data
+_work/
+
+# ZCode project-local state (session plans, project commands/skills)
+# Delete this line if you ever want .zcode/commands versioned in the repo
+.zcode/
