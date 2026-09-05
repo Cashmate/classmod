@@ -190,6 +190,36 @@
     .dmg-title.stab { color: #d08b41; }
     .tstat { margin-top: 5px; font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; letter-spacing: 0.04em; color: #8b8271; }
     .tstat b { color: #b3a893; font-weight: 700; }
+    /* ── Compare mode: primary values, arrows vs the secondary source ── */
+    .cmp-table td, .cmp-table tbody th { padding: 4px 3px; }
+    .cmp-table td[title] { cursor: help; }
+    .cv { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; font-weight: 700; color: #d8d0bd; white-space: nowrap; }
+    td.cmp-hi, td.cmp-lo { border-radius: 6px; }
+    td.cmp-hi { background: rgba(16, 185, 129, 0.14); }
+    td.cmp-lo { background: rgba(244, 63, 94, 0.11); }
+    .cv .dir { font-size: 0.55rem; margin-right: 2px; }
+    /* hovering a differing value (number OR its W/REL/… label) swaps the number for the difference */
+    .cmp-table .diff, .tstat .slot .diff { display: none; }
+    .cmp-table td:hover .base, .tstat .slot:hover .base { display: none; }
+    .cmp-table td:hover .diff, .tstat .slot:hover .diff { display: inline; }
+    .tstat .slot[title] { cursor: help; }
+    td.cmp-hi .dir, .tstat b.cphp .dir { color: #6ee7b7; }
+    td.cmp-lo .dir, .tstat b.cmplp .dir { color: #fda4af; }
+    .tstat b.cphp { color: #6ee7b7; }
+    .tstat b.cmplp { color: #fda4af; }
+    /* Compare checkbox */
+    .cmpbox { display: inline-flex; align-items: center; gap: 5px; cursor: pointer; user-select: none; }
+    .cmpbox input { position: absolute; opacity: 0; pointer-events: none; }
+    .cmpbox .box { width: 14px; height: 14px; border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.18); background: rgba(255, 255, 255, 0.04); display: inline-flex; align-items: center; justify-content: center; transition: all 0.15s ease; }
+    .cmpbox .box svg { width: 10px; height: 10px; opacity: 0; color: #201d2e; }
+    .cmpbox input:checked + .box { background: #f0b37e; border-color: #f0b37e; }
+    .cmpbox input:checked + .box svg { opacity: 1; }
+    .cmpbox input:checked ~ .lbl { color: #f0b37e; }
+    .cmpbox .lbl { font-size: 0.62rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #8b8271; transition: color 0.15s ease; }
+    /* primary/secondary highlights + connector line on the stats seg */
+    .stats-seg { position: relative; }
+    .cmpline { position: absolute; height: 2px; border-radius: 2px; bottom: 0; z-index: 1; pointer-events: none; box-shadow: 0 0 4px rgba(240, 179, 126, 0.35); }
+    .seg .mode-btn.secondary { background: rgba(148, 163, 184, 0.32); color: #cdd8e4; }
 
     /* Normal / Alt mode segmented toggle */
     .seg { display: inline-flex; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 8px; overflow: hidden; }
@@ -590,8 +620,8 @@
         <span class="text-sm font-bold tracking-wide text-white">CLASSMOD</span>
       </a>
       <!-- Site version tracks this webpage only (the mod version in the text below tracks the in-game mod, see Patch Notes).
-           Site history: v0.1 pre-overhaul site · v0.2.0 UI overhaul · v1.0 (current) new weapon handling values + alt-mode toggle + alt-damage tables synced to mod BPs -->
-      <p class="text-center text-xs font-medium text-slate-500">Cashmate's Classmod · mod v0.2.3 · site v1.0 · More classes to come</p>
+           Site history: v0.1 pre-overhaul site · v0.2.0 UI overhaul · v1.0 alt-mode toggle + BP-verified damage tables · v1.1 (current) classmod/vanilla/promod stat-source toggle + per-card compare mode (primary vs secondary, legs rows for vanilla/promod), promod values from ProClasses, classmod recovery values added, stats moved to weapon-data.js -->
+      <p class="text-center text-xs font-medium text-slate-500">Cashmate's Classmod · mod v0.2.3 · site v1.1 · More classes to come</p>
       <div class="flex items-center gap-1.5">
         <a href="https://discord.gg/xaZhEMJnHa" target="_blank" rel="noopener noreferrer" aria-label="Discord"
            class="grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-white/5 text-slate-400 transition-all duration-300 hover:-translate-y-0.5 hover:border-indigo-400/40 hover:text-indigo-300">
@@ -644,6 +674,8 @@
 
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <!-- Weapon stats (classmod / vanilla / promod) — see weapon-data.js -->
+  <script src="weapon-data.js?v=1.1"></script>
   <script>
   (function () {
     "use strict";
@@ -770,107 +802,8 @@
       document.body.removeChild(ta);
     }
 
-    // ── Roster data ──
-    // Each weapon IS a class: fixed armor loadout [tier values per slot] and
-    // damage as [vs T3, vs T2, vs T1]; players have 100 HP.
-    // altMode: true → the weapon has a Normal/Alt pair on mordstats.com
-    // (Greatsword, Longsword, Bardiche, Bastard Sword, Spear, Eveningstar,
-    //  Halberd, Zweihander, Estoc — Executioner's and Maul have no alt).
-    var WEAPONS = [
-      { name: "Greatsword", armor: [3, 3, 3], altMode: true, extras: "+ Shortsword",
-        strike: { head: [52, 60, 70], body: [36, 38, 52] },
-        stab:    { head: [52, 60, 70], body: [36, 38, 52] },
-        alt: {
-          strike: { head: [45, 49, 65], body: [30, 34, 50] },
-          stab:    { head: [45, 66, 75], body: [40, 51, 60] }
-        },
-        note: "Head+Head kills T3. Head+Body leaves T2 with 2 HP." },
-      { name: "Longsword", armor: [2, 3, 3], altMode: true, extras: "+ Cleaver | Fury",
-        strike: { head: [52, 55, 70], body: [36, 40, 52] },
-        stab:    { head: [52, 55, 70], body: [36, 40, 52] },
-        alt: {
-          strike: { head: [60, 61, 63], body: [40, 41, 43] },
-          stab:    { head: [40, 41, 43], body: [25, 26, 28] }
-        } },
-      { name: "Bardiche", armor: [2, 3, 3], altMode: true,
-        strike: { head: [60, 70, 100], body: [40, 50, 60] },
-        stab:    { head: [30, 35, 40], body: [25, 30, 35] },
-        alt: {
-          strike: { head: [60, 71, 100], body: [45, 51, 75] },
-          stab:    { head: [35, 40, 50], body: [20, 25, 33] }
-        },
-        note: "Head 1-shots T1. Head+Body kills T3. Body+Body kills T2." },
-      { name: "Bastard Sword", armor: [2, 3, 3], altMode: true, extras: "+ Mace, Firepot | Second Wind",
-        strike: { head: [38, 42, 60], body: [34, 37, 50] },
-        stab:    { head: [38, 42, 60], body: [34, 37, 50] },
-        alt: {
-          strike: { head: [38, 42, 80], body: [34, 37, 65] },
-          stab:    { head: [45, 60, 90], body: [38, 45, 75] }
-        } },
-      { name: "Spear", armor: [2, 3, 3], altMode: true, extras: "+ Shortsword, Firepot | Second Wind",
-        strike: { head: [32, 38, 45], body: [17, 23, 30] },
-        stab:    { head: [52, 60, 85], body: [36, 38, 52] },
-        alt: {
-          strike: { head: [35, 48, 64], body: [20, 33, 49] },
-          stab:    { head: [45, 67, 77], body: [38, 52, 62] }
-        },
-        note: "Head+Head kills T3. Body+Body stabs leave T2 with 24 HP." },
-      { name: "Eveningstar", armor: [2, 2, 2], altMode: true,
-        strike: { head: [60, 70, 90], body: [50, 60, 70] },
-        stab:    { head: [30, 35, 40], body: [25, 30, 35] },
-        alt: {
-          strike: { head: [65, 77, 100], body: [55, 57, 59] },
-          stab:    { head: [50, 65, 70], body: [40, 55, 60] }
-        },
-        note: "2-shots everything with strikes (Body+Body kills T3). Does NOT 1-shot T1 head." },
-      { name: "Halberd", armor: [2, 2, 2], altMode: true,
-        strike: { head: [60, 70, 100], body: [40, 60, 80] },
-        stab:    { head: [50, 52, 75], body: [35, 45, 60] },
-        alt: {
-          strike: { head: [58, 70, 100], body: [40, 60, 80] },
-          stab:    { head: [50, 52, 75], body: [35, 45, 60] }
-        },
-        note: "Head 1-shots T1. Body+Head kills T3. Body+Body kills T2." },
-      { name: "Executioner's", armor: [1, 2, 2],
-        strike: { head: [60, 70, 100], body: [50, 60, 70] },
-        stab:    { head: [25, 30, 40], body: [20, 25, 35] },
-        note: "Head 1-shots T1. Body+Body kills T3." },
-      { name: "Maul", armor: [1, 2, 2], extras: "+ Shortsword | Rush",
-        strike: { head: [100, 100, 100], body: [70, 80, 90] },
-        stab:    { head: [30, 35, 40], body: [25, 30, 35] },
-        note: "1-shots Head across ALL armor tiers." },
-      { name: "Zweihander", armor: [2, 1, 1], altMode: true, extras: "+ Dagger | Flesh Wound",
-        strike: { head: [50, 70, 80], body: [38, 50, 60] },
-        stab:    { head: [45, 52, 65], body: [35, 38, 50] },
-        alt: {
-          strike: { head: [44, 52, 70], body: [34, 37, 55] },
-          stab:    { head: [48, 70, 78], body: [40, 55, 63] }
-        },
-        note: "2-shots T2 body. Similar HTK to Halberd, but does not 1-shot T1 head." },
-      { name: "Estoc", armor: [1, 1, 1], altMode: true,
-        strike: { head: [32, 35, 45], body: [17, 23, 30] },
-        stab:    { head: [52, 60, 85], body: [36, 40, 52] },
-        alt: {
-          strike: { head: [60, 61, 63], body: [40, 41, 43] },
-          stab:    { head: [40, 41, 43], body: [25, 26, 28] }
-        },
-        note: "Head+Head kills T3. Head+Body kills T2." }
-    ];
-
-    // Alt modes: fill w.alt per weapon from the _Beta BPs where the Second*
-    // records override damage (currently only Halberd). Weapons without alt
-    // damage data render as dashes until values are provided.
-    WEAPONS.forEach(function (w) {
-      if (w.altMode && !w.alt) w.alt = {
-        strike: { head: [null, null, null], body: [null, null, null] },
-        stab:    { head: [null, null, null], body: [null, null, null] }
-      };
-    });
-
     var HP = 100;
 
-    // Weapon timing stats (windup/release/turncaps) — from _Beta BPs + vanilla parents
-var WEAPON_TIMINGS = {"Zweihander":{"strike":{"w":650,"r":525,"t":[252,176],"cw":100},"stab":{"w":725,"r":325,"t":[276,193],"cw":225},"altStrike":{"w":600,"r":500,"t":[262.5,183.75],"cw":175},"altStab":{"w":625,"r":350,"t":[300,210],"cw":125}},"Spear":{"strike":{"w":625,"r":475,"t":[249,175],"nc":true},"stab":{"w":650,"r":350,"t":[252,176],"nc":true},"altStrike":{"w":575,"r":450,"t":[284,198],"cw":100},"altStab":{"w":575,"r":350,"t":[284,198],"cw":200}},"Greatsword":{"strike":{"w":575,"r":525,"t":[257,180],"cw":175},"stab":{"w":675,"r":325,"t":[284,198],"cw":250},"altStrike":{"w":575,"r":500,"t":[262.5,183.75],"cw":200},"altStab":{"w":600,"r":350,"t":[300,210],"cw":125}},"Longsword":{"strike":{"w":560,"r":525,"t":[266,187],"cw":150},"stab":{"w":615,"r":350,"t":[299,209],"cw":200},"altStrike":{"w":540,"r":500,"t":[275,192.5],"cw":200},"altStab":{"w":550,"r":350,"t":[312.5,218.75],"cw":225}},"Bardiche":{"strike":{"w":625,"r":500,"t":[257,180],"cw":175},"stab":{"w":625,"r":350,"t":[289,202],"cw":250},"altStrike":{"w":675,"r":475,"t":[257,180],"nc":true},"altStab":{"w":650,"r":325,"t":[263,184],"nc":true}},"Bastard Sword":{"strike":{"w":525,"r":475,"t":[287.5,201.25],"cw":150},"stab":{"w":575,"r":325,"t":[325,227.5],"cw":225},"altStrike":{"w":525,"r":525,"t":[287.5,201.25],"cw":150},"altStab":{"w":575,"r":350,"t":[325,227.5],"cw":225}},"Eveningstar":{"strike":{"w":675,"r":500,"t":[245,171],"cw":175},"stab":{"w":625,"r":325,"t":[278,195],"cw":275},"altStrike":{"w":650,"r":450,"t":[262.5,183.75],"cw":175},"altStab":{"w":675,"r":300,"t":[275,192.5],"cw":275}},"Halberd":{"strike":{"w":625,"r":500,"t":[257,180],"cw":125},"stab":{"w":675,"r":325,"t":[276,193],"cw":175},"altStrike":{"w":675,"r":500,"t":[245,171.5],"nc":true},"altStab":{"w":700,"r":325,"t":[249,175],"nc":true}},"Executioner's":{"strike":{"w":650,"r":500,"t":[247,173],"nc":true},"stab":{"w":625,"r":350,"t":[270,189],"nc":true},"altStrike":{"w":600,"r":550,"t":[300,210],"nc":true},"altStab":{"w":575,"r":375,"t":[312.5,218.75],"nc":true}},"Maul":{"strike":{"w":725,"r":475,"t":[268,187],"nc":true},"stab":{"w":650,"r":325,"t":[263,184],"nc":true},"altStrike":{"w":650,"r":500,"t":[250,175],"cw":325},"altStab":{"w":700,"r":350,"t":[250,175],"cw":275}},"Estoc":{"strike":{"w":525,"r":500,"t":[289,202],"cw":175},"stab":{"w":625,"r":350,"t":[284,198],"cw":175},"altStrike":{"w":600,"r":500,"t":[262.5,183.75],"cw":225},"altStab":{"w":575,"r":325,"t":[300,210],"cw":225}}};
 
     // Armor tier colors — shared by the pips, the armor figure and the table dots
     var TIER_COLOR = { 3: "#E58E4C", 2: "#A6935F", 1: "#F8F5EC" };
@@ -899,8 +832,9 @@ var WEAPON_TIMINGS = {"Zweihander":{"strike":{"w":650,"r":525,"t":[252,176],"cw"
     function cell(dmg) { return dmg === null ? '<td><span class="d d4">—</span></td>' : '<td><span class="d ' + htkClass(dmg) + '">' + dmg + "</span></td>"; }
 
     // One compact table per attack mode (strike / stab), displayed side by side.
-    // The T3/T2/T1 headers carry tier-colored dots matching the armor figure.
-    function modeBlock(title, cls, zones, timingHtml) {
+    // zoneRows: [label, values] pairs; vanilla/promod also carry a legs row
+    // (labelled Chest for the torso, matching the other stat sources).
+    function modeBlock(title, cls, zoneRows, timingHtml) {
       return '<div>' +
         '<p class="dmg-title ' + cls + '">' + title + "</p>" +
         '<table class="dmg">' +
@@ -910,40 +844,113 @@ var WEAPON_TIMINGS = {"Zweihander":{"strike":{"w":650,"r":525,"t":[252,176],"cw"
             '<th><span class="tdot" style="background:' + TIER_COLOR[1] + '"></span>T1</th>' +
           '</tr></thead>' +
           "<tbody>" +
-            '<tr><th scope="row" class="atk">Head</th>' + zones.head.map(cell).join("") + "</tr>" +
-            '<tr><th scope="row" class="atk">Body</th>' + zones.body.map(cell).join("") + "</tr>" +
+            zoneRows.map(function (zr) {
+              return '<tr><th scope="row" class="atk">' + zr[0] + "</th>" + zr[1].map(cell).join("") + "</tr>";
+            }).join("") +
           "</tbody></table>" + (timingHtml || "") + "</div>";
     }
 
+    // Hover title explains each abbreviated handling stat (CMB-W is ADDED to
+    // the base windup for combos). Values are plain numbers — the "+" sign is
+    // reserved for compare-mode differences.
+    var STAT_INFO = {
+      W: "Windup (ms)",
+      REL: "Release (ms)",
+      REC: "Miss recovery (ms)",
+      TURN: "Turn caps x/y — larger = looser",
+      "CMB-W": "Combo windup — added to the base windup (ms)"
+    };
+    function statSlot(k, txt) {
+      return '<span class="slot" title="' + STAT_INFO[k] + '">' + k + " <b>" + txt + "</b></span>";
+    }
     function timingLine(t) {
-      if (!t) return "";
       var parts = [];
-      if (t.w !== undefined) parts.push("W <b>" + t.w + "</b>");
-      if (t.r !== undefined) parts.push("REL <b>" + t.r + "</b>");
-      if (t.rec !== undefined) parts.push("REC <b>" + t.rec + "</b>");
-      if (t.t) parts.push("TURN <b>" + t.t[0] + "/" + t.t[1] + "</b>");
-      if (t.cw !== undefined && !t.nc) parts.push("CMB-W <b>+" + t.cw + "</b>");
-      return parts.length ? '<div class="tstat">' + parts.join(" · ") + "</div>" : "";
+      if (t.w !== undefined) parts.push(statSlot("W", t.w));
+      if (t.r !== undefined) parts.push(statSlot("REL", t.r));
+      if (t.rec !== undefined) parts.push(statSlot("REC", t.rec));
+      if (t.t) parts.push(statSlot("TURN", t.t[0] + "/" + t.t[1]));
+      if (t.cw !== undefined && !t.nc) parts.push(statSlot("CMB-W", t.cw));
+      return '<div class="tstat">' + parts.join(" · ") + "</div>";
     }
 
-    function dmgTables(w, mode, wt) {
-      var z = mode === "alt" ? w.alt : w;
+    // Placeholder strip for a stat source whose timings aren't published yet (promod)
+    function dashTimingLine() {
+      var order = ["W", "REL", "REC", "TURN", "CMB-W"];
+      return '<div class="tstat">' + order.map(function (k) { return statSlot(k, "—"); }).join(" · ") + "</div>";
+    }
+
+    // stats: object with strike/stab[/alt] zones; wt: timings for that source (or null);
+    // chestLabels: vanilla/promod label the torso "Chest" and add a legs row
+    function dmgTables(stats, mode, wt, chestLabels) {
+      var z = mode === "alt" ? stats.alt : stats;
       var strikeT = wt ? (mode === "alt" ? wt.altStrike : wt.strike) : null;
       var stabT = wt ? (mode === "alt" ? wt.altStab : wt.stab) : null;
+      var zones = function (zz) {
+        var rows = [["Head", zz.head], [chestLabels ? "Chest" : "Body", zz.body]];
+        if (chestLabels && zz.legs) rows.push(["Legs", zz.legs]);
+        return rows;
+      };
       return '<div class="dmg-wrap">' +
-        modeBlock("Strike", "strike", z.strike, timingLine(strikeT)) +
-        modeBlock("Stab", "stab", z.stab, timingLine(stabT)) +
+        modeBlock("Strike", "strike", zones(z.strike), wt ? timingLine(strikeT) : dashTimingLine()) +
+        modeBlock("Stab", "stab", zones(z.stab), wt ? timingLine(stabT) : dashTimingLine()) +
         "</div>";
+    }
+
+    // Segmented stat-source toggle — classmod & promod sit together (the two
+    // mod variants), vanilla last. While compare is on, the primary source is
+    // highlighted orange, the secondary gray, and a line connects the two.
+    function sourceToggle() {
+      return '<span class="flex items-center gap-2">' +
+        '<span class="text-[0.62rem] font-extrabold uppercase tracking-widest text-slate-500">Stats</span>' +
+        '<div class="seg stats-seg">' +
+          '<button type="button" class="mode-btn active" data-source="classmod">Classmod</button>' +
+          '<button type="button" class="mode-btn" data-source="promod">Promod</button>' +
+          '<button type="button" class="mode-btn" data-source="vanilla">Vanilla</button>' +
+          '<i class="cmpline" style="display:none"></i>' +
+        '</div></span>';
+    }
+
+    // Compare checkbox: colors the current source's values against the
+    // previous source picked on the tri-toggle (▲ higher / ▼ lower).
+    function compareCheckbox(w) {
+      return '<label class="cmpbox" title="Compare with the previous source you picked on the Stats toggle — ▲ higher, ▼ lower">' +
+        '<input type="checkbox" data-compare-check' + (cmpOn(w) ? " checked" : "") + '>' +
+        '<span class="box"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m2.5 6.5 2.5 2.5 4.5-5"/></svg></span>' +
+        '<span class="lbl">Compare</span></label>';
+    }
+    function setSourceUI(card, w) {
+      var primary = primaryOf(w), secondary = secondaryOf(w), cmp = cmpOn(w);
+      card.querySelectorAll("[data-source]").forEach(function (b) {
+        var v = b.getAttribute("data-source");
+        b.classList.toggle("active", v === primary);
+        b.classList.toggle("secondary", cmp && v === secondary);
+      });
+      var box = card.querySelector("[data-compare-check]");
+      if (box) box.checked = cmp;
+      var seg = card.querySelector(".stats-seg");
+      var line = seg ? seg.querySelector(".cmpline") : null;
+      if (!line) return;
+      if (!cmp) { line.style.display = "none"; return; }
+      var p = seg.querySelector('[data-source="' + primary + '"]');
+      var s = seg.querySelector('[data-source="' + secondary + '"]');
+      if (!p || !s) { line.style.display = "none"; return; }
+      var a = p.offsetLeft + p.offsetWidth / 2, b = s.offsetLeft + s.offsetWidth / 2;
+      line.style.display = "block";
+      line.style.left = Math.min(a, b) + "px";
+      line.style.width = Math.abs(a - b) + "px";
+      line.style.background = a <= b
+        ? "linear-gradient(90deg, #f0b37e, #94a3b8)"
+        : "linear-gradient(90deg, #94a3b8, #f0b37e)";
     }
 
     // Segmented Normal/Alt toggle for weapons that have an alt mode
     function modeToggle() {
-      return '<div class="mb-2 flex items-center justify-end gap-2">' +
+      return '<span class="flex items-center gap-2">' +
         '<span class="text-[0.62rem] font-extrabold uppercase tracking-widest text-slate-500">Mode</span>' +
         '<div class="seg">' +
           '<button type="button" class="mode-btn active" data-mode="normal">Normal</button>' +
           '<button type="button" class="mode-btn" data-mode="alt">Alt</button>' +
-        '</div></div>';
+        '</div></span>';
     }
 
     var chevSvg = '<svg class="chev" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
@@ -991,13 +998,172 @@ var WEAPON_TIMINGS = {"Zweihander":{"strike":{"w":650,"r":525,"t":[252,176],"cw"
       return html ? '<span class="flex flex-wrap gap-1">' + html + "</span>" : "";
     }
 
+    // ── Stat-source + compare state ──
+    // Session-only: choices live in memory, so a refresh resets every card to
+    // classmod + compare off, while collapsing/re-opening a card keeps its
+    // selections. PRIMARY = the source chosen last on the tri-toggle;
+    // SECONDARY = the one chosen just before it. Compare colors the primary's
+    // values by how they relate to the secondary (▲ higher / ▼ lower).
+    var savedSources = {};
+    var savedCompare = {};
+    var savedSecondary = {};
+    function primaryOf(w) {
+      var s = savedSources[w.name];
+      return s === "vanilla" || s === "promod" ? s : "classmod";
+    }
+    function secondaryOf(w) {
+      var s = savedSecondary[w.name];
+      if ((s === "classmod" || s === "vanilla" || s === "promod") && s !== primaryOf(w)) return s;
+      // no usable history yet: classmod pairs with promod (the mod sibling), else with classmod
+      return primaryOf(w) === "classmod" ? "promod" : "classmod";
+    }
+    function cmpOn(w) { return savedCompare[w.name] === true; }
+    var WEAPONS_BY_NAME = {};
+    WEAPONS.forEach(function (w) { WEAPONS_BY_NAME[w.name] = w; });
+
+    function statsFor(w, src) {
+      if (src === "vanilla") return VANILLA[w.name] || null;
+      if (src === "promod") return PROMOD[w.name] || null;
+      return w;
+    }
+    function timingsFor(w, src) {
+      var map = src === "vanilla" ? VANILLA_TIMINGS : src === "promod" ? PROMOD_TIMINGS : WEAPON_TIMINGS;
+      return map[w.name] || null;
+    }
+    // All-dash tables used while a source has no data yet
+    function emptyStats() {
+      var zones = function () { return { head: [null, null, null], body: [null, null, null] }; };
+      return { strike: zones(), stab: zones(), alt: { strike: zones(), stab: zones() } };
+    }
+
+    // ── Compare rendering: the primary's values, colored by how they relate
+    // to the secondary (▲ higher / ▼ lower). Hovering a value shows the
+    // secondary's counterpart. Legs always show in compare mode; classmod
+    // unifies legs with body, so its legs row mirrors the body row.
+    var SRC_ABBR = { classmod: "CLM", promod: "PRM", vanilla: "VAN" };
+    var signed = function (n) { return (n > 0 ? "+" : "") + Math.round(n * 1000) / 1000; };
+    function cmpModeBlock(title, cls, zoneDefs, timingHtml, secAbbr) {
+      var body = zoneDefs.map(function (zd) {
+        return '<tr><th scope="row" class="atk">' + zd[0] + "</th>" +
+          zd[1].map(function (v, i) {
+            var o = zd[2][i];
+            var vs = ' title="vs ' + secAbbr + ": " + (o === null || o === undefined ? "—" : o) +
+              (v !== null && o !== null && o !== undefined && v !== o ? " (" + signed(v - o) + ")" : "") + '"';
+            if (v === o || v === null || o === null)
+              return "<td" + vs + '><span class="cv">' + (v === null ? "—" : v) + "</span></td>";
+            var hi = v > o;
+            // hovering swaps the primary's number for the difference vs the secondary
+            return '<td class="' + (hi ? "cmp-hi" : "cmp-lo") + '"' + vs + '><span class="cv"><span class="dir">' +
+              (hi ? "▲" : "▼") + '</span><span class="base">' + v + '</span><span class="diff">' +
+              signed(v - o) + "</span></span></td>";
+          }).join("") + "</tr>";
+      }).join("");
+      return '<div>' +
+        '<p class="dmg-title ' + cls + '">' + title + "</p>" +
+        '<table class="dmg cmp-table"><thead><tr><th class="atk">Zone</th>' +
+          '<th><span class="tdot" style="background:' + TIER_COLOR[3] + '"></span>T3</th>' +
+          '<th><span class="tdot" style="background:' + TIER_COLOR[2] + '"></span>T2</th>' +
+          '<th><span class="tdot" style="background:' + TIER_COLOR[1] + '"></span>T1</th>' +
+        '</tr></thead><tbody>' + body + "</tbody></table>" + (timingHtml || "") + "</div>";
+    }
+    // Buff/nerf semantics per timing stat: which direction is an improvement.
+    // (Damage cells are always higher-better.) Arrows stay purely numerical.
+    var TIMING_LOWER_BETTER = { W: true, REL: false, REC: true, TURN: false, "CMB-W": true };
+    function cmpTimingStrip(t, o, secAbbr) {
+      var slots = [
+        { k: "W", a: t.w, b: o.w },
+        { k: "REL", a: t.r, b: o.r },
+        { k: "REC", a: t.rec, b: o.rec },
+        { k: "TURN", a: t.t, b: o.t, fmt: function (v) { return v[0] + "/" + v[1]; } },
+        { k: "CMB-W", a: t.nc ? null : t.cw, b: o.nc ? null : o.cw },
+      ];
+      var parts = slots.map(function (s) {
+        var fmt = s.fmt || function (v) { return v; };
+        var cls = "", dirSpan = "";
+        var lowerBetter = TIMING_LOWER_BETTER[s.k] === true;
+        if (s.a != null && s.b != null) {
+          var c = 0;
+          if (typeof s.a === "number") c = s.a > s.b ? 1 : s.a < s.b ? -1 : 0;
+          else if (Array.isArray(s.a)) c = s.a[0] === s.b[0] && s.a[1] === s.b[1] ? 0
+            : (s.a[0] > s.b[0] || (s.a[0] === s.b[0] && s.a[1] > s.b[1])) ? 1 : -1;
+          if (c !== 0) {
+            var buff = (c > 0) !== lowerBetter;
+            cls = buff ? "cphp" : "cmplp";
+            dirSpan = '<span class="dir">' + (c > 0 ? "▲" : "▼") + "</span>";
+          }
+        } else if (s.k === "CMB-W" && s.a != null) {
+          cls = "cphp"; // primary keeps combos, the other source lost them
+        } else if (s.k === "CMB-W" && s.b != null) {
+          cls = "cmplp"; // primary lost combos the other source has
+        }
+        var txt = s.a == null ? (s.k === "CMB-W" ? "NC" : "—") : fmt(s.a);
+        var vs = "";
+        var swap = "";
+        if (s.b != null) {
+          var bTxt = Array.isArray(s.b) ? s.b[0] + "/" + s.b[1] : s.b;
+          var diffTxt = "";
+          if (s.a != null && typeof s.a === "number" && typeof s.b === "number" && s.a !== s.b)
+            diffTxt = signed(s.a - s.b);
+          else if (s.a != null && Array.isArray(s.a) && Array.isArray(s.b) && (s.a[0] !== s.b[0] || s.a[1] !== s.b[1]))
+            diffTxt = s.a.map(function (x, i) { return signed(x - s.b[i]); }).join("/");
+          vs = ' title="' + (STAT_INFO[s.k] ? STAT_INFO[s.k] + " — " : "") + "vs " + secAbbr + ": " + bTxt + (diffTxt ? " (" + diffTxt + ")" : "") + '"';
+          // hovering swaps the primary's number for the difference vs the secondary
+          if (diffTxt) swap = dirSpan + '<span class="base">' + txt + '</span><span class="diff">' + diffTxt + "</span>";
+        }
+        // the whole slot (label + value) is the hover target
+        return '<span class="slot"' + vs + ">" + s.k + ' <b class="' + cls + '">' + (swap || dirSpan + txt) + "</b></span>";
+      }).join(" · ");
+      return '<div class="tstat">' + parts + "</div>";
+    }
+    function compareTables(w, primary, secondary, mode) {
+      var pStats = statsFor(w, primary) || emptyStats();
+      var sStats = statsFor(w, secondary) || emptyStats();
+      var pZ = mode === "alt" ? pStats.alt : pStats;
+      var sZ = mode === "alt" ? sStats.alt : sStats;
+      var bodyLabel = primary === "classmod" ? "Body" : "Chest";
+      var mkRows = function (pzz, szz) {
+        return [
+          ["Head", pzz.head, szz.head],
+          [bodyLabel, pzz.body, szz.body],
+          // legs always show in compare mode; classmod has no separate leg
+          // values (unified with body), so its legs row mirrors the body row
+          ["Legs", pzz.legs || pzz.body, szz.legs || szz.body],
+        ];
+      };
+      var tP = timingsFor(w, primary), tS = timingsFor(w, secondary);
+      var ks = mode === "alt" ? "altStrike" : "strike";
+      var kk = mode === "alt" ? "altStab" : "stab";
+      var secAbbr = SRC_ABBR[secondary];
+      return '<div class="dmg-wrap">' +
+        cmpModeBlock("Strike", "strike", mkRows(pZ.strike, sZ.strike), tP && tS ? cmpTimingStrip(tP[ks], tS[ks], secAbbr) : "", secAbbr) +
+        cmpModeBlock("Stab", "stab", mkRows(pZ.stab, sZ.stab), tP && tS ? cmpTimingStrip(tP[kk], tS[kk], secAbbr) : "", secAbbr) +
+        "</div>";
+    }
+
+    // Fill a card's mode views + note for the current source/compare state
+    function fillCardViews(card, w) {
+      var cmp = cmpOn(w);
+      var primary = primaryOf(w);
+      card.querySelectorAll(".mode-view").forEach(function (v) {
+        var mode = v.getAttribute("data-view");
+        v.innerHTML = cmp
+          ? compareTables(w, primary, secondaryOf(w), mode)
+          : dmgTables(statsFor(w, primary) || emptyStats(), mode, timingsFor(w, primary), primary !== "classmod");
+      });
+      // The note's HTK claims describe classmod values — only show it there,
+      // and not while comparing (it would only describe one side)
+      card.querySelector(".src-note").innerHTML =
+        (!cmp && primary === "classmod" && w.note)
+          ? '<p class="wnote mt-2.5 flex items-center gap-1.5 text-xs italic leading-relaxed text-amber-200/80">' + noteSvg + "<span>" + w.note + "</span></p>"
+          : "";
+    }
+
     function cardHTML(w) {
-      var wt = WEAPON_TIMINGS[w.name] || null;
       var pips = w.armor.map(function (v) { return '<i class="pip p' + v + '">' + v + "</i>"; }).join("");
       var searchable = [w.name, w.extras || "", w.note || ""].join(" ").toLowerCase();
       var icon = ICONS[w.name] ? '<img src="' + ICONS[w.name] + '" alt="" class="wicon h-14 w-9 object-contain" loading="lazy" />' : "";
       var figure = '<span title="Head tier ' + w.armor[0] + ' · Body tier ' + w.armor[1] + ' · Legs tier ' + w.armor[2] + '" class="flex-none">' + armorFigure(w.armor) + '</span>';
-      return '<article class="wcard glass lift relative overflow-hidden rounded-2xl border border-white/10 shadow-card hover:border-indigo-400/30 hover:shadow-card-hover" data-search="' + searchable + '" style="--tier:' + tierColor(armorSum(w)) + '">' +
+      return '<article class="wcard glass lift relative overflow-hidden rounded-2xl border border-white/10 shadow-card hover:border-indigo-400/30 hover:shadow-card-hover" data-name="' + w.name + '" data-search="' + searchable + '" style="--tier:' + tierColor(armorSum(w)) + '">' +
         '<button type="button" class="wcard-head flex w-full items-center justify-start gap-3 px-4 py-3.5 text-left transition-colors duration-300 hover:bg-white/[0.03]" aria-expanded="false">' +
           icon +
           '<span class="min-w-0">' +
@@ -1008,12 +1174,18 @@ var WEAPON_TIMINGS = {"Zweihander":{"strike":{"w":650,"r":525,"t":[252,176],"cw"
         "</button>" +
         '<div class="expander"><div>' +
           '<div class="px-4 pb-4 pl-5">' +
+            '<div class="mb-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">' +
+              '<span class="flex flex-wrap items-center gap-x-3 gap-y-2">' +
+                sourceToggle() +
+                compareCheckbox(w) +
+              "</span>" +
+              (w.altMode ? modeToggle() : "") +
+            "</div>" +
             (w.altMode
-              ? modeToggle() +
-                '<div class="mode-view" data-view="normal">' + dmgTables(w, "normal", wt) + "</div>" +
-                '<div class="mode-view" data-view="alt" hidden>' + dmgTables(w, "alt", wt) + "</div>"
-              : dmgTables(w, "normal", wt)) +
-            (w.note ? '<p class="wnote mt-2.5 flex items-center gap-1.5 text-xs italic leading-relaxed text-amber-200/80">' + noteSvg + "<span>" + w.note + "</span></p>" : "") +
+              ? '<div class="mode-view" data-view="normal"></div>' +
+                '<div class="mode-view" data-view="alt" hidden></div>'
+              : '<div class="mode-view" data-view="normal"></div>') +
+            '<div class="src-note"></div>' +
           "</div>" +
         "</div></div>" +
         "</article>";
@@ -1042,6 +1214,12 @@ var WEAPON_TIMINGS = {"Zweihander":{"strike":{"w":650,"r":525,"t":[252,176],"cw"
     function render() {
       cardsEl.innerHTML = WEAPONS.map(cardHTML).join("");
       layoutColumns();
+      // Restore each card's persisted stat source + compare state
+      cardsEl.querySelectorAll(".wcard").forEach(function (card) {
+        var w = WEAPONS_BY_NAME[card.getAttribute("data-name")];
+        setSourceUI(card, w);
+        fillCardViews(card, w);
+      });
     }
 
     var resizeTimer;
@@ -1071,12 +1249,25 @@ var WEAPON_TIMINGS = {"Zweihander":{"strike":{"w":650,"r":525,"t":[252,176],"cw"
     searchInput.addEventListener("input", applyFilters);
     searchInput.addEventListener("search", applyFilters); // native clear (✕) button
 
-    // ── Expand / collapse + mode toggle (event delegation) ──
+    // ── Expand / collapse + source & compare toggles (event delegation) ──
     document.getElementById("roster").addEventListener("click", function (e) {
-      var modeBtn = e.target.closest(".mode-btn");
+      var srcBtn = e.target.closest("[data-source]");
+      if (srcBtn) {
+        var srcCard = srcBtn.closest(".wcard");
+        var srcW = WEAPONS_BY_NAME[srcCard.getAttribute("data-name")];
+        var clicked = srcBtn.getAttribute("data-source");
+        var prev = primaryOf(srcW);
+        savedSources[srcW.name] = clicked;
+        // primary = last clicked; the previous primary becomes the secondary
+        if (clicked !== prev) { savedSecondary[srcW.name] = prev; }
+        setSourceUI(srcCard, srcW);
+        fillCardViews(srcCard, srcW);
+        return;
+      }
+      var modeBtn = e.target.closest(".mode-btn[data-mode]");
       if (modeBtn) {
         var modeCard = modeBtn.closest(".wcard");
-        modeCard.querySelectorAll(".mode-btn").forEach(function (b) { b.classList.toggle("active", b === modeBtn); });
+        modeCard.querySelectorAll(".mode-btn[data-mode]").forEach(function (b) { b.classList.toggle("active", b === modeBtn); });
         var mode = modeBtn.getAttribute("data-mode");
         modeCard.querySelectorAll(".mode-view").forEach(function (v) { v.hidden = v.getAttribute("data-view") !== mode; });
         return;
@@ -1086,6 +1277,16 @@ var WEAPON_TIMINGS = {"Zweihander":{"strike":{"w":650,"r":525,"t":[252,176],"cw"
       var card = head.closest(".wcard");
       var open = card.classList.toggle("open");
       head.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+    // Compare checkbox (change, not click — labels would double-fire clicks)
+    document.getElementById("roster").addEventListener("change", function (e) {
+      var box = e.target.closest("[data-compare-check]");
+      if (!box) return;
+      var card = box.closest(".wcard");
+      var w = WEAPONS_BY_NAME[card.getAttribute("data-name")];
+      savedCompare[w.name] = box.checked;
+      setSourceUI(card, w);
+      fillCardViews(card, w);
     });
 
     // Type anywhere to search: printable keys jump into the search box
