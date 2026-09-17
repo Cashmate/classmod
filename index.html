@@ -66,6 +66,15 @@
     html { scroll-behavior: smooth; }
     body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
     ::selection { background: rgba(222, 122, 59, 0.4); color: #fff; }
+
+    /* Cursor discipline: a plain arrow everywhere, ? on anything tooltip-enabled
+       (native title= or the custom tooltip), and the native text caret only
+       inside text fields. Hover glow already marks what is interactive, so the
+       hand and I-beam carry no extra information. !important out-ranks the
+       Tailwind preflight button-pointer and the component cursors. */
+    body { cursor: default; }
+    button, [role="button"], a, label, summary { cursor: default !important; }
+    [title], [data-tip], [data-tip-html] { cursor: help !important; }
     ::-webkit-scrollbar { width: 10px; }
     ::-webkit-scrollbar-track { background: #0e0b08; }
     ::-webkit-scrollbar-thumb { background: #3a2f24; border-radius: 8px; }
@@ -114,8 +123,49 @@
 
     /* Expandable damage panels (grid-rows animation, no JS height math) */
     .expander { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.32s cubic-bezier(0.4, 0, 0.2, 1); }
-    .wcard.open .expander { grid-template-rows: 1fr; }
+    .wcard.open > .expander { grid-template-rows: 1fr; }  /* direct child only — the secondary panel nests its own expander */
     .expander > div { overflow: hidden; min-height: 0; }
+
+    /* Secondary-weapon box — primary-card pattern: the bar is the box header;
+       opening grows the box downward with the stats inside it. Hover mirrors
+       the primary card: orange border + soft glow on the box, white tint on
+       the header row. */
+    .sec-block { border: 1px solid rgba(255, 255, 255, 0.10); border-radius: 12px; background: rgba(255, 255, 255, 0.03); overflow: hidden; transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease; }
+    .sec-block:hover { border-color: rgba(229, 142, 76, 0.3); box-shadow: 0 0 24px -6px rgba(222, 122, 59, 0.18); }
+    .sec-block.open { border-color: rgba(240, 179, 126, 0.4); background: rgba(222, 122, 59, 0.08); }
+    .sec-block.open:hover { border-color: rgba(240, 179, 126, 0.55); }
+    .sec-block.open .expander { grid-template-rows: 1fr; }
+    .sec-toggle { display: flex; width: 100%; align-items: center; gap: 9px; padding: 6px 10px; border: 0; background: transparent; text-align: left; transition: background 0.25s ease; }
+    .sec-toggle:hover { background: rgba(255, 255, 255, 0.03); }
+    .sec-name { font-size: 0.8rem; font-weight: 800; color: #d8d0bd; }
+    .sec-block.open .sec-name { color: #f0b37e; }
+    .sec-tag { margin-left: auto; flex: none; display: inline-flex; align-items: center; gap: 3.5px; font-size: 0.56rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: #cfc7b4; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.10); border-radius: 999px; padding: 1.5px 7px 1.5px 5.5px; white-space: nowrap; }
+    .sec-chev { flex: none; display: inline-flex; color: #8b8271; transition: transform 0.25s ease, color 0.25s ease; }
+    .sec-block.open .sec-chev { transform: rotate(180deg); color: #f0b37e; }
+    .sec-panel { padding: 0 10px 10px; }  /* stats live inside the box, aligned with the header title */
+    .sec-note { display: flex; align-items: center; gap: 5px; margin-top: 7px; font-size: 0.66rem; font-style: italic; color: #8b8271; }
+
+    /* Custom tooltip ([data-tip]) — instant, anchored above the cursor */
+    #cktip {
+      position: fixed; z-index: 70; max-width: 260px;
+      padding: 6px 9px; border-radius: 8px;
+      background: rgba(18, 14, 10, 0.96);
+      border: 1px solid rgba(240, 179, 126, 0.35);
+      box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.7), 0 0 12px -4px rgba(222, 122, 59, 0.25);
+      color: #f3e9d2; font-size: 0.72rem; line-height: 1.45; font-weight: 600;
+      pointer-events: none;
+      opacity: 0; transition: opacity 70ms linear;
+    }
+    #cktip.show { opacity: 1; }
+    /* colored comparison lines inside handling-stat tooltips */
+    #cktip .cphp { color: #6ee7b7; }
+    #cktip .cmplp { color: #fda4af; }
+    #cktip .mut { color: #b3a893; }
+    /* tippable stat words get a subtle dotted-underline affordance */
+    .dmg-title span[data-tip] { text-decoration: underline dotted rgba(236, 173, 116, 0.5); text-underline-offset: 3px; }
+    /* hovering the word glows exactly the table it labels */
+    .dmg { transition: box-shadow 0.2s ease, border-color 0.2s ease; }
+    .dmg-title:has(span[data-tip]:hover) + .dmg { border-color: rgba(240, 179, 126, 0.45); box-shadow: 0 0 16px -4px rgba(222, 122, 59, 0.35); }
 
     /* Armor pips — gold T3 / charcoal T2 / white T1, high contrast, upright numerals */
     .pip {
@@ -153,6 +203,8 @@
     .tag svg { flex: none; }
     .tag-sec { color: #cfc7b4; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.10); }
     .tag-perk { color: #f0b37e; background: rgba(222, 122, 59, 0.14); border: 1px solid rgba(222, 122, 59, 0.35); }
+    .tag-nimble { color: #f8f5ec; background: rgba(248, 245, 236, 0.10); border: 1px solid rgba(248, 245, 236, 0.40); }
+    .sec-toggle .tag-nimble { flex: none; }
 
     /* Damage table inside expanded cards */
     .dmg {
@@ -192,23 +244,21 @@
     .tstat b { color: #b3a893; font-weight: 700; }
     /* ── Compare mode: primary values, arrows vs the secondary source ── */
     .cmp-table td, .cmp-table tbody th { padding: 4px 3px; }
-    .cmp-table td[title] { cursor: help; }
     .cv { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; font-weight: 700; color: #d8d0bd; white-space: nowrap; }
     td.cmp-hi, td.cmp-lo { border-radius: 6px; }
     td.cmp-hi { background: rgba(16, 185, 129, 0.14); }
     td.cmp-lo { background: rgba(244, 63, 94, 0.11); }
     .cv .dir { font-size: 0.55rem; margin-right: 2px; }
-    /* hovering a differing value (number OR its W/REL/… label) swaps the number for the difference */
-    .cmp-table .diff, .tstat .slot .diff { display: none; }
-    .cmp-table td:hover .base, .tstat .slot:hover .base { display: none; }
-    .cmp-table td:hover .diff, .tstat .slot:hover .diff { display: inline; }
-    .tstat .slot[title] { cursor: help; }
+    /* hovering a differing damage value swaps the number for the difference */
+    .cmp-table .diff { display: none; }
+    .cmp-table td:hover .base { display: none; }
+    .cmp-table td:hover .diff { display: inline; }
     td.cmp-hi .dir, .tstat b.cphp .dir { color: #6ee7b7; }
     td.cmp-lo .dir, .tstat b.cmplp .dir { color: #fda4af; }
     .tstat b.cphp { color: #6ee7b7; }
     .tstat b.cmplp { color: #fda4af; }
     /* Compare checkbox */
-    .cmpbox { display: inline-flex; align-items: center; gap: 5px; cursor: pointer; user-select: none; }
+    .cmpbox { display: inline-flex; align-items: center; gap: 5px; user-select: none; }
     .cmpbox input { position: absolute; opacity: 0; pointer-events: none; }
     .cmpbox .box { width: 14px; height: 14px; border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.18); background: rgba(255, 255, 255, 0.04); display: inline-flex; align-items: center; justify-content: center; transition: all 0.15s ease; }
     .cmpbox .box svg { width: 10px; height: 10px; opacity: 0; color: #201d2e; }
@@ -223,7 +273,7 @@
 
     /* Normal / Alt mode segmented toggle */
     .seg { display: inline-flex; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 8px; overflow: hidden; }
-    .seg .mode-btn { padding: 3px 10px; font-size: 0.66rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #8b8271; background: transparent; border: 0; cursor: pointer; transition: background 0.2s ease, color 0.2s ease; }
+    .seg .mode-btn { padding: 3px 10px; font-size: 0.66rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #8b8271; background: transparent; border: 0; transition: background 0.2s ease, color 0.2s ease; }
     .seg .mode-btn:hover { color: #cfc7b4; }
     .seg .mode-btn.active { background: rgba(229, 142, 76, 0.25); color: #f0b37e; }
 
@@ -314,7 +364,7 @@
       <div class="animate-fade-up">
         <span class="inline-flex flex-wrap items-center gap-2 rounded-full border border-indigo-400/25 bg-indigo-500/10 px-3 py-1 text-[0.7rem] font-bold tracking-wide text-indigo-300">
           <i data-lucide="sparkles" class="h-3 w-3"></i>
-          <a href="#patch-v0.2.3" title="Open patch notes" class="transition-colors duration-300 hover:text-indigo-100 hover:underline underline-offset-2">v0.2.3</a>
+          <a href="#patch-v0.4" data-tip="Open patch notes" class="transition-colors duration-300 hover:text-indigo-100 hover:underline underline-offset-2">v0.4</a>
           <span aria-hidden="true">·</span>
           <span>Beta</span>
           <span id="newlyUpdated" class="inline-flex items-center gap-2">
@@ -443,7 +493,7 @@
         <summary class="flex cursor-pointer list-none items-center justify-between gap-4 p-5 transition-colors duration-300 hover:bg-white/[0.03] [&::-webkit-details-marker]:hidden">
           <div class="flex items-center gap-3">
             <span class="grid h-9 w-9 flex-none place-items-center rounded-xl border border-indigo-400/30 bg-indigo-500/15"><i data-lucide="scroll-text" class="h-4 w-4 text-indigo-300"></i></span>
-            <h2 class="text-lg font-extrabold tracking-tight text-white">Patch Notes <span class="font-bold text-slate-500">· v0.2.3</span></h2>
+            <h2 class="text-lg font-extrabold tracking-tight text-white">Patch Notes <span class="font-bold text-slate-500">· v0.4</span></h2>
           </div>
           <div class="flex items-center gap-3">
             <span class="hidden text-xs font-medium italic text-slate-500 sm:inline">Click to expand</span>
@@ -451,11 +501,81 @@
           </div>
         </summary>
         <div class="patchnotes space-y-3 border-t border-white/5 px-5 pb-5 pt-4">
-          <details id="patch-v0.2.3" data-date="2026-09-01" class="rounded-xl border border-white/10 bg-white/[0.03] transition-all duration-300 open:border-indigo-400/25">
+          <details id="patch-v0.4" data-date="2026-09-17" class="rounded-xl border border-white/10 bg-white/[0.03] transition-all duration-300 open:border-indigo-400/25">
+            <summary class="flex cursor-pointer list-none flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3 transition-colors duration-300 hover:bg-white/[0.03] [&::-webkit-details-marker]:hidden">
+              <span class="flex flex-wrap items-center gap-2">
+                <span class="rounded-md border border-indigo-400/30 bg-indigo-500/15 px-2 py-0.5 font-mono text-[0.72rem] font-bold text-indigo-300">v0.4</span>
+                <span class="rounded-full border border-emerald-400/30 bg-emerald-500/10 px-2 py-0.5 text-[0.62rem] font-bold text-emerald-300">Latest</span>
+                <span class="text-xs font-semibold text-slate-500">movement rework</span>
+              </span>
+              <span class="flex items-center gap-3">
+                <span class="text-xs font-semibold text-slate-500">Sep 17, 2026</span>
+                <i data-lucide="chevron-down" class="chev-rotate h-4 w-4 text-slate-400"></i>
+              </span>
+            </summary>
+            <div class="grid gap-3 border-t border-white/5 p-4 lg:grid-cols-2">
+              <section class="rounded-xl border border-white/5 bg-white/[0.02] p-4">
+                <h3 class="flex items-center justify-between gap-2">
+                  <span class="flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-indigo-300"><i data-lucide="sparkles" class="h-3.5 w-3.5"></i> Features</span>
+                  <span class="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[0.62rem] font-bold text-slate-500">2 changes</span>
+                </h3>
+                <ul class="mt-3 space-y-2 text-sm leading-relaxed text-slate-400">
+                  <li class="flex gap-2.5 rounded-lg border border-emerald-400/25 bg-emerald-500/[0.07] px-2.5 py-1.5"><span class="mt-3.5 h-1.5 w-1.5 flex-none rounded-full bg-emerald-400"></span><span><strong class="font-bold text-slate-200">New:</strong> Added <strong class="font-bold text-slate-200">Poleaxe</strong> as a playable class</span></li>
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span><strong class="font-bold text-slate-200">Movement rework:</strong> speed is now determined by the <strong class="font-bold text-slate-200">weapon held</strong> instead of armor — all weapons move at the same speed, except these are faster: <code>Bastard Sword / Mace</code>, <code>Exec Sword</code>, <code>Maul</code>, <code>Zweihander</code>, <code>Estoc</code></span></li>
+                </ul>
+              </section>
+              <section class="rounded-xl border border-white/5 bg-white/[0.02] p-4">
+                <h3 class="flex items-center justify-between gap-2">
+                  <span class="flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-indigo-300"><i data-lucide="wind" class="h-3.5 w-3.5"></i> Movement &amp; Combat</span>
+                  <span class="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[0.62rem] font-bold text-slate-500">6 changes</span>
+                </h3>
+                <ul class="mt-3 space-y-2 text-sm leading-relaxed text-slate-400">
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span><strong class="font-bold text-slate-200">Jump reworked:</strong> now speeds you up <code>slightly</code> instead of slowing you down | More air strafe control</span></li>
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span>Jump stamina cost <code>10 → 5</code> <span class="buff">BUFF</span></span></li>
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span>Jump cooldown lowered <span class="buff">BUFF</span></span></li>
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span>Movespeed during parry recovery <code>slightly</code> slower <span class="nerf">NERF</span></span></li>
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span>Player bubble/collision size <code>120 → 100</code></span></li>
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span>All camera shake disabled (most noticeable when blocking or getting flinched)</span></li>
+                </ul>
+              </section>
+              <section class="rounded-xl border border-white/5 bg-white/[0.02] p-4">
+                <h3 class="flex items-center justify-between gap-2">
+                  <span class="flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-indigo-300"><i data-lucide="zap" class="h-3.5 w-3.5"></i> Stamina &amp; Perks</span>
+                  <span class="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[0.62rem] font-bold text-slate-500">2 changes</span>
+                </h3>
+                <ul class="mt-3 space-y-2 text-sm leading-relaxed text-slate-400">
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span><strong class="font-bold text-slate-200">Second Wind:</strong> grants <code>5</code> stamina on hit instead of <code>3</code> <span class="buff">BUFF</span></span></li>
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span><strong class="font-bold text-slate-200">Flesh Wound:</strong> zombie state lasts <code>3.5s</code> instead of <code>5s</code> <span class="buff">BUFF</span></span></li>
+                </ul>
+              </section>
+              <section class="rounded-xl border border-white/5 bg-white/[0.02] p-4">
+                <h3 class="flex items-center justify-between gap-2">
+                  <span class="flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-indigo-300"><i data-lucide="flame" class="h-3.5 w-3.5"></i> General</span>
+                  <span class="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[0.62rem] font-bold text-slate-500">1 change</span>
+                </h3>
+                <ul class="mt-3 space-y-2 text-sm leading-relaxed text-slate-400">
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span>Firepot equip speed increased <span class="buff">BUFF</span></span></li>
+                </ul>
+              </section>
+              <section class="rounded-xl border border-white/5 bg-white/[0.02] p-4 lg:col-span-2">
+                <h3 class="flex items-center justify-between gap-2">
+                  <span class="flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-indigo-300"><i data-lucide="wrench" class="h-3.5 w-3.5"></i> Fixes &amp; Server</span>
+                  <span class="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[0.62rem] font-bold text-slate-500">4 changes</span>
+                </h3>
+                <ul class="mt-3 space-y-2 text-sm leading-relaxed text-slate-400">
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span>Outdated mod versions are now properly detected and kicked, to prevent "accidental cheating"</span></li>
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span>Server join messages fixed</span></li>
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span>Admins no longer get kicked while AFK</span></li>
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span>Deathmatch warmup skipped</span></li>
+                </ul>
+              </section>
+            </div>
+          </details>
+
+          <details id="patch-v0.2.3" data-date="2026-09-01" class="rounded-xl border border-white/10 bg-white/[0.03] transition-all duration-300 hover:border-white/20">
             <summary class="flex cursor-pointer list-none flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3 transition-colors duration-300 hover:bg-white/[0.03] [&::-webkit-details-marker]:hidden">
               <span class="flex flex-wrap items-center gap-2">
                 <span class="rounded-md border border-indigo-400/30 bg-indigo-500/15 px-2 py-0.5 font-mono text-[0.72rem] font-bold text-indigo-300">v0.2.3</span>
-                <span class="rounded-full border border-emerald-400/30 bg-emerald-500/10 px-2 py-0.5 text-[0.62rem] font-bold text-emerald-300">Latest</span>
                 <span class="text-xs font-semibold text-slate-500">big patch</span>
               </span>
               <span class="flex items-center gap-3">
@@ -620,8 +740,8 @@
         <span class="text-sm font-bold tracking-wide text-white">CLASSMOD</span>
       </a>
       <!-- Site version tracks this webpage only (the mod version in the text below tracks the in-game mod, see Patch Notes).
-           Site history: v0.1 pre-overhaul site · v0.2.0 UI overhaul · v1.0 alt-mode toggle + BP-verified damage tables · v1.1 (current) classmod/vanilla/promod stat-source toggle + per-card compare mode (primary vs secondary, legs rows for vanilla/promod), promod values from ProClasses, classmod recovery values added, stats moved to weapon-data.js -->
-      <p class="text-center text-xs font-medium text-slate-500">Cashmate's Classmod · mod v0.2.3 · site v1.1 · More classes to come</p>
+           Site history: v0.1 pre-overhaul site · v0.2.0 UI overhaul · v1.0 alt-mode toggle + BP-verified damage tables · v1.1 classmod/vanilla/promod stat-source toggle + per-card compare mode (primary vs secondary, legs rows for vanilla/promod), promod values from ProClasses, classmod recovery values added, stats moved to weapon-data.js · v1.2 Poleaxe class added (BP-verified roster via /verify-classes) · v1.3 secondary-weapon stat panels (expandable bar under the primary stats, sharing the source/compare/mode toggles; Mace & Warhammer BP-verified via CDO export, Shortsword/Cleaver/Dagger classmod = vanilla) · v1.4 patch notes for mod v0.4 (Poleaxe class, movement rework, jump/stamina/perk tweaks, server fixes) · v1.5 Nimble tag on the five faster classes + the Mace secondary (v0.4 movement rework) · v1.6 Nimble pill on the Mace secondary panel bar · v1.7 (current) Nimble pill moved up next to the weapon name -->
+      <p class="text-center text-xs font-medium text-slate-500">Cashmate's Classmod · mod v0.4 · site v1.7 · More classes to come</p>
       <div class="flex items-center gap-1.5">
         <a href="https://discord.gg/xaZhEMJnHa" target="_blank" rel="noopener noreferrer" aria-label="Discord"
            class="grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-white/5 text-slate-400 transition-all duration-300 hover:-translate-y-0.5 hover:border-indigo-400/40 hover:text-indigo-300">
@@ -672,10 +792,13 @@
     </div>
   </div>
 
+  <!-- Custom tooltip host ([data-tip] targets) -->
+  <div id="cktip" role="tooltip" hidden></div>
+
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <!-- Weapon stats (classmod / vanilla / promod) — see weapon-data.js -->
-  <script src="weapon-data.js?v=1.1"></script>
+  <script src="weapon-data.js?v=1.3"></script>
   <script>
   (function () {
     "use strict";
@@ -709,12 +832,12 @@
     // Auto-open collapsible sections ("Why", patch notes) when navigated to
     // from the nav, when the page loads with their hash, or on hash changes.
     // Deep-linking a specific version (#patch-v0.2.2) expands only that one;
-    // a plain load or #patchnotes expands the latest (v0.2.3).
+    // a plain load or #patchnotes expands the latest (v0.4).
     function openFromHash() {
       var hash = location.hash.replace("#", "");
       var patchPanel = document.getElementById("patchDetails");
       var versions = document.querySelectorAll("#patchDetails details");
-      var latest = document.getElementById("patch-v0.2.3");
+      var latest = document.getElementById("patch-v0.4");
 
       if (hash.indexOf("patch-v") === 0) {
         var target = document.getElementById(hash);
@@ -774,6 +897,51 @@
       if (e.key === "Escape" && !whereModal.hidden) whereModal.hidden = true;
     });
 
+    // ── Custom tooltip ([data-tip] text / [data-tip-html] trusted markup,
+    // optional [data-tip-below] to open under the cursor) — instant ──
+    var tipEl = document.getElementById("cktip");
+    function hideTip() {
+      tipEl.classList.remove("show");
+      tipEl.hidden = true;
+    }
+    function showTip(trigger, x, y) {
+      var html = trigger.getAttribute("data-tip-html");
+      if (html) tipEl.innerHTML = html;
+      else tipEl.textContent = trigger.getAttribute("data-tip");
+      tipEl.classList.toggle("below", trigger.hasAttribute("data-tip-below"));
+      tipEl.hidden = false;
+      void tipEl.offsetHeight; // flush style so the fade-in runs without waiting for a frame
+      tipEl.classList.add("show");
+      positionTip(x, y);
+    }
+    function positionTip(x, y) {
+      var w = tipEl.offsetWidth, h = tipEl.offsetHeight;
+      var left = Math.min(Math.max(8, x - w / 2), window.innerWidth - w - 8);
+      var top = tipEl.classList.contains("below") ? y + 18 : y - h - 14;
+      if (top < 8) top = y + 18;                                    // flip below near the top edge
+      else if (top + h > window.innerHeight - 8) top = y - h - 14;  // flip above near the bottom edge
+      tipEl.style.left = Math.round(left) + "px";
+      tipEl.style.top = Math.round(top) + "px";
+    }
+    var TIPSEL = "[data-tip],[data-tip-html]";
+    document.addEventListener("mouseover", function (e) {
+      var t = e.target.closest(TIPSEL);
+      if (!t) { hideTip(); return; }
+      showTip(t, e.clientX, e.clientY);
+    });
+    // self-starting: also shows when the pointer is already inside a tipped
+    // element (no boundary crossing — e.g. after a re-render under the cursor)
+    document.addEventListener("mousemove", function (e) {
+      var t = e.target.closest(TIPSEL);
+      if (!t) { if (!tipEl.hidden) hideTip(); return; }
+      if (tipEl.hidden) showTip(t, e.clientX, e.clientY);
+      else positionTip(e.clientX, e.clientY);
+    });
+    document.addEventListener("mouseout", function (e) {
+      if (!e.relatedTarget && e.target.closest(TIPSEL)) hideTip(); // pointer left the window
+    });
+    document.addEventListener("scroll", hideTip, true);
+
     // Copy the server password
     var pwCopy = document.getElementById("pwCopy");
     pwCopy.addEventListener("click", function () {
@@ -831,12 +999,50 @@
     function htkClass(dmg) { return "d" + Math.min(4, Math.ceil(HP / dmg)); }
     function cell(dmg) { return dmg === null ? '<td><span class="d d4">—</span></td>' : '<td><span class="d ' + htkClass(dmg) + '">' + dmg + "</span></td>"; }
 
+    // ── HTK tooltip generator: derives the flavor text from the DISPLAYED
+    // damage zones (site encoding [T3, T2, T1], 100 HP), so the words can
+    // never drift from the numbers they sit above. Used for every source,
+    // mode and secondary. Returns null when there is nothing to describe.
+    function htkTip(zones) {
+      if (!zones || !zones.head) return null;
+      var tiers = ["T3", "T2", "T1"];
+      var sentences = [];
+      var oneShots = tiers.filter(function (t, i) { return zones.head[i] >= 100; });
+      if (oneShots.length === 3) sentences.push("Head 1-shots at every tier.");
+      else if (oneShots.length) sentences.push("Head 1-shots " + oneShots.join(" and ") + ".");
+      else if (zones.head[2] >= 80) sentences.push("Head does not 1-shot T1 (leaves " + (100 - zones.head[2]) + " HP).");
+      var combos = [["Head+Head", "head", "head"], ["Head+Body", "head", "body"], ["Body+Body", "body", "body"]];
+      var groups = [];
+      tiers.forEach(function (label, i) {
+        var killers = combos.filter(function (c) { return zones[c[1]][i] + zones[c[2]][i] >= 100; })
+          .map(function (c) { return c[0]; });
+        var key = killers.join("|");
+        var last = groups[groups.length - 1];
+        if (last && last.key === key) last.tiers.push(label);
+        else groups.push({ key: key, killers: killers, tiers: [label] });
+      });
+      groups.forEach(function (g) {
+        var t = g.tiers.length > 2 ? g.tiers.join("/") : g.tiers.join(" and ");
+        var need = g.tiers.length > 1 ? "need" : "needs";
+        if (g.killers.length === 3) sentences.push("Anything 2-shots " + t + ".");
+        else if (g.killers.length === 2 && g.killers.indexOf("Body+Body") === -1) sentences.push(t + " " + need + " a head hit.");
+        else if (g.killers.length === 1 && g.killers[0] === "Head+Head") sentences.push(t + " " + need + " Head+Head.");
+        else if (g.killers.length) sentences.push("Only " + g.killers.join(" and ") + " 2-shots " + t + ".");
+        else {
+          var rems = g.tiers.map(function (label) { return 100 - zones.head[tiers.indexOf(label)] * 2; });
+          sentences.push("No 2-hit kill vs " + t + " (Head+Head leaves " + rems.join("/") + " HP).");
+        }
+      });
+      return sentences.length ? sentences.join(" ") : null;
+    }
+
     // One compact table per attack mode (strike / stab), displayed side by side.
     // zoneRows: [label, values] pairs; vanilla/promod also carry a legs row
     // (labelled Chest for the torso, matching the other stat sources).
-    function modeBlock(title, cls, zoneRows, timingHtml) {
+    // The HTK tooltip lives on the word's span — not the full-width title row.
+    function modeBlock(title, cls, zoneRows, timingHtml, tip) {
       return '<div>' +
-        '<p class="dmg-title ' + cls + '">' + title + "</p>" +
+        '<p class="dmg-title ' + cls + '"><span' + (tip ? ' data-tip="' + tip + '"' : "") + ">" + title + "</span></p>" +
         '<table class="dmg">' +
           '<thead><tr><th class="atk">Zone</th>' +
             '<th><span class="tdot" style="background:' + TIER_COLOR[3] + '"></span>T3</th>' +
@@ -850,9 +1056,10 @@
           "</tbody></table>" + (timingHtml || "") + "</div>";
     }
 
-    // Hover title explains each abbreviated handling stat (CMB-W is ADDED to
-    // the base windup for combos). Values are plain numbers — the "+" sign is
-    // reserved for compare-mode differences.
+    // Custom tooltips explain each abbreviated handling stat (CMB-W is ADDED
+    // to the base windup for combos); in compare mode the tooltip also carries
+    // the color-coded comparison vs the secondary source. Values are plain
+    // numbers — the "+" sign is reserved for compare-mode differences.
     var STAT_INFO = {
       W: "Windup (ms)",
       REL: "Release (ms)",
@@ -861,7 +1068,7 @@
       "CMB-W": "Combo windup — added to the base windup (ms)"
     };
     function statSlot(k, txt) {
-      return '<span class="slot" title="' + STAT_INFO[k] + '">' + k + " <b>" + txt + "</b></span>";
+      return '<span class="slot" data-tip="' + STAT_INFO[k] + '" data-tip-below>' + k + " <b>" + txt + "</b></span>";
     }
     function timingLine(t) {
       var parts = [];
@@ -880,7 +1087,8 @@
     }
 
     // stats: object with strike/stab[/alt] zones; wt: timings for that source (or null);
-    // chestLabels: vanilla/promod label the torso "Chest" and add a legs row
+    // chestLabels: vanilla/promod label the torso "Chest" and add a legs row.
+    // HTK tooltips are generated from the displayed zones (all sources/modes).
     function dmgTables(stats, mode, wt, chestLabels) {
       var z = mode === "alt" ? stats.alt : stats;
       var strikeT = wt ? (mode === "alt" ? wt.altStrike : wt.strike) : null;
@@ -891,8 +1099,8 @@
         return rows;
       };
       return '<div class="dmg-wrap">' +
-        modeBlock("Strike", "strike", zones(z.strike), wt ? timingLine(strikeT) : dashTimingLine()) +
-        modeBlock("Stab", "stab", zones(z.stab), wt ? timingLine(stabT) : dashTimingLine()) +
+        modeBlock("Strike", "strike", zones(z.strike), wt ? timingLine(strikeT) : dashTimingLine(), htkTip(z.strike)) +
+        modeBlock("Stab", "stab", zones(z.stab), wt ? timingLine(stabT) : dashTimingLine(), htkTip(z.stab)) +
         "</div>";
     }
 
@@ -913,7 +1121,7 @@
     // Compare checkbox: colors the current source's values against the
     // previous source picked on the tri-toggle (▲ higher / ▼ lower).
     function compareCheckbox(w) {
-      return '<label class="cmpbox" title="Compare with the previous source you picked on the Stats toggle — ▲ higher, ▼ lower">' +
+      return '<label class="cmpbox" data-tip="Compare with the previous source you picked on the Stats toggle — ▲ higher, ▼ lower">' +
         '<input type="checkbox" data-compare-check' + (cmpOn(w) ? " checked" : "") + '>' +
         '<span class="box"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m2.5 6.5 2.5 2.5 4.5-5"/></svg></span>' +
         '<span class="lbl">Compare</span></label>';
@@ -968,7 +1176,13 @@
       "Executioner's": "img/executionerssword.png",
       "Maul": "img/maul.png",
       "Zweihander": "img/zweihander.png",
-      "Estoc": "img/estoc.png"
+      "Estoc": "img/estoc.png",
+      "Poleaxe": "img/poleaxe.png",
+      "Warhammer": "img/warhammer.png",
+      "Cleaver": "img/cleaver.png",
+      "Mace": "img/mace.png",
+      "Dagger": "img/dagger.png",
+      "Shortsword": "img/shortsword.png"
     };
 
     var noteSvg = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
@@ -977,12 +1191,18 @@
     // Tag pills for secondaries (+ equipment) and perks
     var SEC_ICON = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" x2="19" y1="19" y2="13"/><line x1="16" x2="20" y1="16" y2="20"/><line x1="19" x2="21" y1="21" y2="19"/></svg>';
     var PERK_ICON = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>';
+    var NIMBLE_ICON = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></svg>';
+    var TAG_ICON = { sec: SEC_ICON, perk: PERK_ICON, nimble: NIMBLE_ICON };
 
     function tag(text, kind, title) {
-      return '<span class="tag tag-' + kind + '" title="' + title + '">' + (kind === "perk" ? PERK_ICON : SEC_ICON) + text + "</span>";
+      return '<span class="tag tag-' + kind + '" data-tip="' + title + '">' + TAG_ICON[kind] + text + "</span>";
     }
 
+    var NIMBLE_TIP = "Movespeed increased";
+
     // "+ Shortsword, Firepot | Second Wind" → [Secondary tags][Perk tags]
+    // The Nimble pill does NOT live here — it sits next to the weapon name
+    // (cardHTML); the Mace secondary repeats it on its panel bar instead.
     function extrasTags(w) {
       if (!w.extras) return "";
       var parts = w.extras.replace(/^\+\s*/, "").split("|");
@@ -1020,6 +1240,20 @@
     function cmpOn(w) { return savedCompare[w.name] === true; }
     var WEAPONS_BY_NAME = {};
     WEAPONS.forEach(function (w) { WEAPONS_BY_NAME[w.name] = w; });
+    var SECONDARIES_BY_NAME = {};
+    SECONDARIES.forEach(function (s) { SECONDARIES_BY_NAME[s.name] = s; });
+    // The class's melee secondary — the first extras tag that is a stat-table
+    // weapon; Firepot and perks are not. Null when the class carries none.
+    function meleeSecondary(w) {
+      if (!w.extras) return null;
+      var first = w.extras.replace(/^\+\s*/, "").split("|")[0] || "";
+      var tags = first.split(",");
+      for (var i = 0; i < tags.length; i++) {
+        var t = tags[i].trim();
+        if (SECONDARIES_BY_NAME[t]) return SECONDARIES_BY_NAME[t];
+      }
+      return null;
+    }
 
     function statsFor(w, src) {
       if (src === "vanilla") return VANILLA[w.name] || null;
@@ -1042,24 +1276,25 @@
     // unifies legs with body, so its legs row mirrors the body row.
     var SRC_ABBR = { classmod: "CLM", promod: "PRM", vanilla: "VAN" };
     var signed = function (n) { return (n > 0 ? "+" : "") + Math.round(n * 1000) / 1000; };
-    function cmpModeBlock(title, cls, zoneDefs, timingHtml, secAbbr) {
+    function cmpModeBlock(title, cls, zoneDefs, timingHtml, secAbbr, tip) {
       var body = zoneDefs.map(function (zd) {
         return '<tr><th scope="row" class="atk">' + zd[0] + "</th>" +
           zd[1].map(function (v, i) {
             var o = zd[2][i];
-            var vs = ' title="vs ' + secAbbr + ": " + (o === null || o === undefined ? "—" : o) +
-              (v !== null && o !== null && o !== undefined && v !== o ? " (" + signed(v - o) + ")" : "") + '"';
+            var tipTxt = "vs " + secAbbr + ": " + (o === null || o === undefined ? "—" : o) +
+              (v !== null && o !== null && o !== undefined && v !== o ? " (" + signed(v - o) + ")" : "");
             if (v === o || v === null || o === null)
-              return "<td" + vs + '><span class="cv">' + (v === null ? "—" : v) + "</span></td>";
+              return '<td data-tip="' + tipTxt + '" data-tip-below><span class="cv">' + (v === null ? "—" : v) + "</span></td>";
             var hi = v > o;
-            // hovering swaps the primary's number for the difference vs the secondary
-            return '<td class="' + (hi ? "cmp-hi" : "cmp-lo") + '"' + vs + '><span class="cv"><span class="dir">' +
+            // the tooltip carries the comparison, colored like the cell
+            var tipHtml = " data-tip-html=\"<span class='" + (hi ? "cphp" : "cmplp") + "'>" + tipTxt + "</span>\" data-tip-below";
+            return '<td class="' + (hi ? "cmp-hi" : "cmp-lo") + '"' + tipHtml + '><span class="cv"><span class="dir">' +
               (hi ? "▲" : "▼") + '</span><span class="base">' + v + '</span><span class="diff">' +
               signed(v - o) + "</span></span></td>";
           }).join("") + "</tr>";
       }).join("");
       return '<div>' +
-        '<p class="dmg-title ' + cls + '">' + title + "</p>" +
+        '<p class="dmg-title ' + cls + '"><span' + (tip ? ' data-tip="' + tip + '"' : "") + ">" + title + "</span></p>" +
         '<table class="dmg cmp-table"><thead><tr><th class="atk">Zone</th>' +
           '<th><span class="tdot" style="background:' + TIER_COLOR[3] + '"></span>T3</th>' +
           '<th><span class="tdot" style="background:' + TIER_COLOR[2] + '"></span>T2</th>' +
@@ -1097,8 +1332,9 @@
           cls = "cmplp"; // primary lost combos the other source has
         }
         var txt = s.a == null ? (s.k === "CMB-W" ? "NC" : "—") : fmt(s.a);
-        var vs = "";
-        var swap = "";
+        // tooltip: muted stat explanation + the comparison vs the secondary
+        // source, colored with the slot's buff/nerf class
+        var tip = "";
         if (s.b != null) {
           var bTxt = Array.isArray(s.b) ? s.b[0] + "/" + s.b[1] : s.b;
           var diffTxt = "";
@@ -1106,12 +1342,13 @@
             diffTxt = signed(s.a - s.b);
           else if (s.a != null && Array.isArray(s.a) && Array.isArray(s.b) && (s.a[0] !== s.b[0] || s.a[1] !== s.b[1]))
             diffTxt = s.a.map(function (x, i) { return signed(x - s.b[i]); }).join("/");
-          vs = ' title="' + (STAT_INFO[s.k] ? STAT_INFO[s.k] + " — " : "") + "vs " + secAbbr + ": " + bTxt + (diffTxt ? " (" + diffTxt + ")" : "") + '"';
-          // hovering swaps the primary's number for the difference vs the secondary
-          if (diffTxt) swap = dirSpan + '<span class="base">' + txt + '</span><span class="diff">' + diffTxt + "</span>";
+          var cmpTxt = "vs " + secAbbr + ": " + bTxt + (diffTxt ? " (" + diffTxt + ")" : "");
+          var cmpHtml = cls ? "<span class='" + cls + "'>" + cmpTxt + "</span>" : cmpTxt;
+          var expl = STAT_INFO[s.k] ? "<span class='mut'>" + STAT_INFO[s.k] + "</span><br>" : "";
+          tip = " data-tip-html=\"" + expl + cmpHtml + "\" data-tip-below";
         }
         // the whole slot (label + value) is the hover target
-        return '<span class="slot"' + vs + ">" + s.k + ' <b class="' + cls + '">' + (swap || dirSpan + txt) + "</b></span>";
+        return '<span class="slot"' + tip + ">" + s.k + ' <b class="' + cls + '">' + dirSpan + txt + "</b></span>";
       }).join(" · ");
       return '<div class="tstat">' + parts + "</div>";
     }
@@ -1135,12 +1372,13 @@
       var kk = mode === "alt" ? "altStab" : "stab";
       var secAbbr = SRC_ABBR[secondary];
       return '<div class="dmg-wrap">' +
-        cmpModeBlock("Strike", "strike", mkRows(pZ.strike, sZ.strike), tP && tS ? cmpTimingStrip(tP[ks], tS[ks], secAbbr) : "", secAbbr) +
-        cmpModeBlock("Stab", "stab", mkRows(pZ.stab, sZ.stab), tP && tS ? cmpTimingStrip(tP[kk], tS[kk], secAbbr) : "", secAbbr) +
+        cmpModeBlock("Strike", "strike", mkRows(pZ.strike, sZ.strike), tP && tS ? cmpTimingStrip(tP[ks], tS[ks], secAbbr) : "", secAbbr, htkTip(pZ.strike)) +
+        cmpModeBlock("Stab", "stab", mkRows(pZ.stab, sZ.stab), tP && tS ? cmpTimingStrip(tP[kk], tS[kk], secAbbr) : "", secAbbr, htkTip(pZ.stab)) +
         "</div>";
     }
 
-    // Fill a card's mode views + note for the current source/compare state
+    // Fill a card's mode views + note for the current source/compare state.
+    // HTK tooltips are generated from the displayed values in every case.
     function fillCardViews(card, w) {
       var cmp = cmpOn(w);
       var primary = primaryOf(w);
@@ -1150,24 +1388,74 @@
           ? compareTables(w, primary, secondaryOf(w), mode)
           : dmgTables(statsFor(w, primary) || emptyStats(), mode, timingsFor(w, primary), primary !== "classmod");
       });
-      // The note's HTK claims describe classmod values — only show it there,
-      // and not while comparing (it would only describe one side)
-      card.querySelector(".src-note").innerHTML =
-        (!cmp && primary === "classmod" && w.note)
-          ? '<p class="wnote mt-2.5 flex items-center gap-1.5 text-xs italic leading-relaxed text-amber-200/80">' + noteSvg + "<span>" + w.note + "</span></p>"
-          : "";
+      fillSecPanel(card, w);
+    }
+
+    function currentMode(card) {
+      var v = card.querySelector(".mode-view:not([hidden])");
+      return v ? v.getAttribute("data-view") : "normal";
+    }
+
+    // Fill the secondary-weapon panel (when the class has one) with the same
+    // source/compare/mode state as the primary stats. Secondaries without an
+    // alt attack keep their normal tables while the card is in Alt mode.
+    function fillSecPanel(card, w) {
+      var block = card.querySelector("[data-sec-block]");
+      if (!block) return;
+      var sec = meleeSecondary(w);
+      if (!sec) return;
+      var cmp = cmpOn(w);
+      var primary = primaryOf(w);
+      var mode = currentMode(card);
+      var effMode = sec.altMode ? mode : "normal";
+      block.querySelector(".sec-views").innerHTML = cmp
+        ? compareTables(sec, primary, secondaryOf(w), effMode)
+        : dmgTables(statsFor(sec, primary) || emptyStats(), effMode, timingsFor(sec, primary), primary !== "classmod");
+      var noteEl = block.querySelector(".sec-note");
+      if (!sec.altMode && mode === "alt") {
+        noteEl.innerHTML = noteSvg + "<span>No alt attack — showing normal-mode stats.</span>";
+        noteEl.hidden = false;
+      } else {
+        noteEl.hidden = true;
+      }
+    }
+
+    // Secondary bar + collapsed stat panel, appended below the primary stats
+    function secBlockHTML(w) {
+      var sec = meleeSecondary(w);
+      if (!sec) return "";
+      var icon = ICONS[sec.name] ? '<img src="' + ICONS[sec.name] + '" alt="" class="wicon h-9 w-auto object-contain" loading="lazy" />' : "";
+      var nimble = sec.nimble ? tag("Nimble", "nimble", NIMBLE_TIP) : "";
+      return '<div class="sec-block mt-3" data-sec-block>' +
+        '<button type="button" class="sec-toggle" data-sec-toggle aria-expanded="false">' +
+          icon +
+          '<span class="sec-name">' + sec.name + "</span>" +
+          nimble +
+          '<span class="sec-tag">' + SEC_ICON + "Secondary</span>" +
+          '<span class="sec-chev">' + chevSvg + "</span>" +
+        "</button>" +
+        '<div class="expander"><div>' +
+          '<div class="sec-panel">' +
+            '<div class="sec-views"></div>' +
+            '<div class="sec-note" hidden></div>' +
+          "</div>" +
+        "</div></div>" +
+        "</div>";
     }
 
     function cardHTML(w) {
       var pips = w.armor.map(function (v) { return '<i class="pip p' + v + '">' + v + "</i>"; }).join("");
-      var searchable = [w.name, w.extras || "", w.note || ""].join(" ").toLowerCase();
+      var searchable = [w.name, w.nimble ? "nimble" : "", w.extras || ""].join(" ").toLowerCase();
       var icon = ICONS[w.name] ? '<img src="' + ICONS[w.name] + '" alt="" class="wicon h-14 w-9 object-contain" loading="lazy" />' : "";
-      var figure = '<span title="Head tier ' + w.armor[0] + ' · Body tier ' + w.armor[1] + ' · Legs tier ' + w.armor[2] + '" class="flex-none">' + armorFigure(w.armor) + '</span>';
+      var figure = '<span data-tip="Head tier ' + w.armor[0] + ' · Body tier ' + w.armor[1] + ' · Legs tier ' + w.armor[2] + '" class="flex-none">' + armorFigure(w.armor) + '</span>';
       return '<article class="wcard glass lift relative overflow-hidden rounded-2xl border border-white/10 shadow-card hover:border-indigo-400/30 hover:shadow-card-hover" data-name="' + w.name + '" data-search="' + searchable + '" style="--tier:' + tierColor(armorSum(w)) + '">' +
         '<button type="button" class="wcard-head flex w-full items-center justify-start gap-3 px-4 py-3.5 text-left transition-colors duration-300 hover:bg-white/[0.03]" aria-expanded="false">' +
           icon +
           '<span class="min-w-0">' +
-            '<span class="block text-sm font-bold text-white">' + w.name + "</span>" +
+            '<span class="flex flex-wrap items-center gap-x-2 gap-y-0.5">' +
+              '<span class="text-sm font-bold text-white">' + w.name + "</span>" +
+              (w.nimble ? tag("Nimble", "nimble", NIMBLE_TIP) : "") +
+            "</span>" +
             extrasTags(w) +
           "</span>" +
           '<span class="ml-auto flex flex-none items-center gap-2.5">' + figure + '<span class="pips-v">' + pips + "</span>" + chevSvg + "</span>" +
@@ -1185,7 +1473,7 @@
               ? '<div class="mode-view" data-view="normal"></div>' +
                 '<div class="mode-view" data-view="alt" hidden></div>'
               : '<div class="mode-view" data-view="normal"></div>') +
-            '<div class="src-note"></div>' +
+            secBlockHTML(w) +
           "</div>" +
         "</div></div>" +
         "</article>";
@@ -1270,6 +1558,14 @@
         modeCard.querySelectorAll(".mode-btn[data-mode]").forEach(function (b) { b.classList.toggle("active", b === modeBtn); });
         var mode = modeBtn.getAttribute("data-mode");
         modeCard.querySelectorAll(".mode-view").forEach(function (v) { v.hidden = v.getAttribute("data-view") !== mode; });
+        fillSecPanel(modeCard, WEAPONS_BY_NAME[modeCard.getAttribute("data-name")]);
+        return;
+      }
+      var secBtn = e.target.closest("[data-sec-toggle]");
+      if (secBtn) {
+        var secBlock = secBtn.closest("[data-sec-block]");
+        var secOpen = secBlock.classList.toggle("open");
+        secBtn.setAttribute("aria-expanded", secOpen ? "true" : "false");
         return;
       }
       var head = e.target.closest(".wcard-head");
