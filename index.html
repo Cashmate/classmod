@@ -304,6 +304,7 @@
       html { scroll-behavior: auto; }
     }
   </style>
+  <link rel="stylesheet" href="motd-export.css" />
 </head>
 <body class="bg-[#0b0906] font-sans text-slate-200">
 
@@ -364,7 +365,7 @@
       <div class="animate-fade-up">
         <span class="inline-flex flex-wrap items-center gap-2 rounded-full border border-indigo-400/25 bg-indigo-500/10 px-3 py-1 text-[0.7rem] font-bold tracking-wide text-indigo-300">
           <i data-lucide="sparkles" class="h-3 w-3"></i>
-          <a href="#patch-v0.4" data-tip="Open patch notes" class="transition-colors duration-300 hover:text-indigo-100 hover:underline underline-offset-2">v0.4</a>
+          <a href="#patch-v0.5" data-tip="Open patch notes" class="transition-colors duration-300 hover:text-indigo-100 hover:underline underline-offset-2">v0.5</a>
           <span aria-hidden="true">·</span>
           <span>Beta</span>
           <span id="newlyUpdated" class="inline-flex items-center gap-2">
@@ -493,7 +494,7 @@
         <summary class="flex cursor-pointer list-none items-center justify-between gap-4 p-5 transition-colors duration-300 hover:bg-white/[0.03] [&::-webkit-details-marker]:hidden">
           <div class="flex items-center gap-3">
             <span class="grid h-9 w-9 flex-none place-items-center rounded-xl border border-indigo-400/30 bg-indigo-500/15"><i data-lucide="scroll-text" class="h-4 w-4 text-indigo-300"></i></span>
-            <h2 class="text-lg font-extrabold tracking-tight text-white">Patch Notes <span class="font-bold text-slate-500">· v0.4</span></h2>
+            <h2 class="text-lg font-extrabold tracking-tight text-white">Patch Notes <span class="font-bold text-slate-500">· v0.5</span></h2>
           </div>
           <div class="flex items-center gap-3">
             <span class="hidden text-xs font-medium italic text-slate-500 sm:inline">Click to expand</span>
@@ -501,11 +502,73 @@
           </div>
         </summary>
         <div class="patchnotes space-y-3 border-t border-white/5 px-5 pb-5 pt-4">
-          <details id="patch-v0.4" data-date="2026-09-19" class="rounded-xl border border-white/10 bg-white/[0.03] transition-all duration-300 open:border-indigo-400/25">
+          <details id="patch-v0.5" data-date="2026-09-27" class="rounded-xl border border-white/10 bg-white/[0.03] transition-all duration-300 open:border-indigo-400/25">
+            <summary class="flex cursor-pointer list-none flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3 transition-colors duration-300 hover:bg-white/[0.03] [&::-webkit-details-marker]:hidden">
+              <span class="flex flex-wrap items-center gap-2">
+                <span class="rounded-md border border-indigo-400/30 bg-indigo-500/15 px-2 py-0.5 font-mono text-[0.72rem] font-bold text-indigo-300">v0.5</span>
+                <span class="rounded-full border border-emerald-400/30 bg-emerald-500/10 px-2 py-0.5 text-[0.62rem] font-bold text-emerald-300">Latest</span>
+                <span class="text-xs font-semibold text-slate-500">messer, weapon timing &amp; turncap pass</span>
+              </span>
+              <span class="flex items-center gap-3">
+                <span class="text-xs font-semibold text-slate-500">Sep 27, 2026</span>
+                <i data-lucide="chevron-down" class="chev-rotate h-4 w-4 text-slate-400"></i>
+              </span>
+            </summary>
+            <div class="grid gap-3 border-t border-white/5 p-4 lg:grid-cols-2">
+              <section class="rounded-xl border border-white/5 bg-white/[0.02] p-4">
+                <h3 class="flex items-center justify-between gap-2">
+                  <span class="flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-indigo-300"><i data-lucide="sword" class="h-3.5 w-3.5"></i> Weapons</span>
+                  <span class="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[0.62rem] font-bold text-slate-500">11 changes</span>
+                </h3>
+                <ul class="mt-3 space-y-2 text-sm leading-relaxed text-slate-400">
+                  <li class="flex gap-2.5 rounded-lg border border-emerald-400/25 bg-emerald-500/[0.07] px-2.5 py-1.5"><span class="mt-[8.4px] h-1.5 w-1.5 flex-none rounded-full bg-emerald-400"></span><span><strong class="font-bold text-slate-200">New:</strong> Added <strong class="font-bold text-slate-200">Messer</strong></span></li>
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span><strong class="font-bold text-slate-200">Messer:</strong> Strike windup lowered to <code>525ms</code> <span class="buff">BUFF</span> | Strike release lowered to <code>500ms</code> <span class="nerf">NERF</span> | Damage values buffed <span class="buff">BUFF</span> | Strike combo is <code>15ms</code> faster <span class="buff">BUFF</span> | Strike turncaps raised to <code>273.5/191.5</code> <span class="buff">BUFF</span> | <code>+5%</code> movespeed <span class="buff">BUFF</span></span></li>
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span><strong class="font-bold text-slate-200">Greatsword:</strong> Strike release <code>-10ms</code> <span class="nerf">NERF</span> | Combo is <code>10ms</code> slower <span class="nerf">NERF</span></span></li>
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span><strong class="font-bold text-slate-200">Longsword:</strong> Strike windup <code>+15ms</code> <span class="nerf">NERF</span> | Stab windup <code>+10ms</code> <span class="nerf">NERF</span></span></li>
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span><strong class="font-bold text-slate-200">Bardiche:</strong> Strike windup <code>-25ms</code> <span class="buff">BUFF</span></span></li>
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span><strong class="font-bold text-slate-200">Bastard Sword:</strong> Strike turncap lowered to <code>266/187</code> <span class="nerf">NERF</span> | Stab turncap lowered to <code>299/209</code> <span class="nerf">NERF</span> | Loses the <code>+10%</code> movespeed boost (back to standard speed) <span class="nerf">NERF</span></span></li>
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span><strong class="font-bold text-slate-200">Spear:</strong> Strike windup <code>-25ms</code> <span class="buff">BUFF</span></span></li>
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span><strong class="font-bold text-slate-200">Eveningstar:</strong> Strike windup <code>-25ms</code> <span class="buff">BUFF</span></span></li>
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span><strong class="font-bold text-slate-200">Halberd:</strong> Alt mode stab windup <code>-25ms</code> <span class="buff">BUFF</span> | Alt strike head damage <code>+2</code> <span class="buff">BUFF</span> | Alt stab head damage <code>-10</code> <span class="nerf">NERF</span></span></li>
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span><strong class="font-bold text-slate-200">Warhammer:</strong> Strike release <code>+25ms</code> <span class="buff">BUFF</span></span></li>
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span><strong class="font-bold text-slate-200">Weapon speed boost:</strong> reduced to <code>+5%</code> (was <code>+10%</code>) <span class="nerf">NERF</span> — the tag on faster weapons now shows the exact percentage instead of the old "Nimble" name</span></li>
+                </ul>
+              </section>
+              <section class="rounded-xl border border-white/5 bg-white/[0.02] p-4">
+                <h3 class="flex items-center justify-between gap-2">
+                  <span class="flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-indigo-300"><i data-lucide="sparkles" class="h-3.5 w-3.5"></i> Features</span>
+                  <span class="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[0.62rem] font-bold text-slate-500">2 changes</span>
+                </h3>
+                <ul class="mt-3 space-y-2 text-sm leading-relaxed text-slate-400">
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span><strong class="font-bold text-slate-200">Class roster hotkey:</strong> pressing <code>K</code> in-game now opens the class roster / MOTD menu</span></li>
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span><strong class="font-bold text-slate-200">Hit recovery:</strong> now tuned per-weapon instead of a flat <code>400ms</code> — hit recovery is how fast you can attack again after hitting a player, without comboing (blunt hit-stop attacks are unaffected). Lowered for:
+                    <ul class="mt-2 space-y-2">
+                      <li class="flex gap-2.5 pl-4"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/40"></span><span>Maul <code>400 → 100ms</code> <span class="buff">BUFF</span></span></li>
+                      <li class="flex gap-2.5 pl-4"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/40"></span><span>Executioner's <code>400 → 250ms</code> <span class="buff">BUFF</span></span></li>
+                      <li class="flex gap-2.5 pl-4"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/40"></span><span>Zweihander <code>400 → 275ms</code> <span class="buff">BUFF</span></span></li>
+                      <li class="flex gap-2.5 pl-4"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/40"></span><span>Spear <code>400 → 275ms</code> <span class="buff">BUFF</span></span></li>
+                      <li class="flex gap-2.5 pl-4"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/40"></span><span>Halberd <code>400 → 300ms</code> <span class="buff">BUFF</span></span></li>
+                      <li class="flex gap-2.5 pl-4"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/40"></span><span>Bardiche <code>400 → 300ms</code> <span class="buff">BUFF</span></span></li>
+                    </ul>
+                  </span></li>
+                </ul>
+              </section>
+              <section class="rounded-xl border border-white/5 bg-white/[0.02] p-4 lg:col-span-2">
+                <h3 class="flex items-center justify-between gap-2">
+                  <span class="flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-indigo-300"><i data-lucide="bug" class="h-3.5 w-3.5"></i> Bug Fixes</span>
+                  <span class="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[0.62rem] font-bold text-slate-500">1 fix</span>
+                </h3>
+                <ul class="mt-3 space-y-2 text-sm leading-relaxed text-slate-400">
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span><strong class="font-bold text-slate-200">Animations:</strong> fixed an animation playrate bug — footstep cadence is now correct, and arm/weapon sway moves properly while walking/running</span></li>
+                </ul>
+              </section>
+            </div>
+          </details>
+
+          <details id="patch-v0.4" data-date="2026-09-19" class="rounded-xl border border-white/10 bg-white/[0.03] transition-all duration-300 hover:border-white/20">
             <summary class="flex cursor-pointer list-none flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3 transition-colors duration-300 hover:bg-white/[0.03] [&::-webkit-details-marker]:hidden">
               <span class="flex flex-wrap items-center gap-2">
                 <span class="rounded-md border border-indigo-400/30 bg-indigo-500/15 px-2 py-0.5 font-mono text-[0.72rem] font-bold text-indigo-300">v0.4</span>
-                <span class="rounded-full border border-emerald-400/30 bg-emerald-500/10 px-2 py-0.5 text-[0.62rem] font-bold text-emerald-300">Latest</span>
                 <span class="text-xs font-semibold text-slate-500">poleaxe, movement+jump rework, qol</span>
               </span>
               <span class="flex items-center gap-3">
@@ -730,8 +793,8 @@
         <span class="text-sm font-bold tracking-wide text-white">CLASSMOD</span>
       </a>
       <!-- Site version tracks this webpage only (the mod version in the text below tracks the in-game mod, see Patch Notes).
-           Site history: v0.1 pre-overhaul site · v0.2.0 UI overhaul · v1.0 alt-mode toggle + BP-verified damage tables · v1.1 classmod/vanilla/promod stat-source toggle + per-card compare mode (primary vs secondary, legs rows for vanilla/promod), promod values from ProClasses, classmod recovery values added, stats moved to weapon-data.js · v1.2 Poleaxe class added (BP-verified roster via /verify-classes) · v1.3 secondary-weapon stat panels (expandable bar under the primary stats, sharing the source/compare/mode toggles; Mace & Warhammer BP-verified via CDO export, Shortsword/Cleaver/Dagger classmod = vanilla) · v1.4 patch notes for mod v0.4 (Poleaxe class, movement rework, jump/stamina/perk tweaks, server fixes) · v1.5 Nimble tag on the five faster classes + the Mace secondary (v0.4 movement rework) · v1.6 Nimble pill on the Mace secondary panel bar · v1.7 Nimble pill moved up next to the weapon name · v1.8 (current) v0.4 patch notes now list the ten added skirmish maps -->
-      <p class="text-center text-xs font-medium text-slate-500">Cashmate's Classmod · mod v0.4 · site v1.8 · More classes to come</p>
+           Site history: v0.1 pre-overhaul site · v0.2.0 UI overhaul · v1.0 alt-mode toggle + BP-verified damage tables · v1.1 classmod/vanilla/promod stat-source toggle + per-card compare mode (primary vs secondary, legs rows for vanilla/promod), promod values from ProClasses, classmod recovery values added, stats moved to weapon-data.js · v1.2 Poleaxe class added (BP-verified roster via /verify-classes) · v1.3 secondary-weapon stat panels (expandable bar under the primary stats, sharing the source/compare/mode toggles; Mace & Warhammer BP-verified via CDO export, Shortsword/Cleaver/Dagger classmod = vanilla) · v1.4 patch notes for mod v0.4 (Poleaxe class, movement rework, jump/stamina/perk tweaks, server fixes) · v1.5 Nimble tag on the five faster classes + the Mace secondary (v0.4 movement rework) · v1.6 Nimble pill on the Mace secondary panel bar · v1.7 Nimble pill moved up next to the weapon name · v1.8 v0.4 patch notes list the ten added skirmish maps · v1.9 v0.5 patch notes (Messer, weapon timing &amp; turncap pass) · v1.10 Messer class added (BP-verified roster via CDO export) · v1.11 (current) speed tag now shows the percentage (+5%, was the "Nimble" label) — Bastard Sword loses the boost, Messer gains it + v0.5 patch notes entry -->
+      <p class="text-center text-xs font-medium text-slate-500">Cashmate's Classmod · mod v0.5 · site v1.11 · More classes to come</p>
       <div class="flex items-center gap-1.5">
         <a href="https://discord.gg/xaZhEMJnHa" target="_blank" rel="noopener noreferrer" aria-label="Discord"
            class="grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-white/5 text-slate-400 transition-all duration-300 hover:-translate-y-0.5 hover:border-indigo-400/40 hover:text-indigo-300">
@@ -740,6 +803,7 @@
         <a href="https://cashmate.github.io/classmod/" aria-label="Website" class="grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-white/5 text-slate-400 transition-all duration-300 hover:-translate-y-0.5 hover:border-indigo-400/40 hover:text-indigo-300">
           <i data-lucide="globe" class="h-4 w-4"></i>
         </a>
+        <a href="?motd=1" class="rounded-lg border border-white/10 px-3 py-2 text-xs font-semibold text-slate-400 transition-colors hover:border-indigo-400/40 hover:text-indigo-300">Export MOTD</a>
         <a href="https://mordhau.com" target="_blank" rel="noopener noreferrer" aria-label="Mordhau" class="grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-white/5 text-slate-400 transition-all duration-300 hover:-translate-y-0.5 hover:border-indigo-400/40 hover:text-indigo-300">
           <i data-lucide="swords" class="h-4 w-4"></i>
         </a>
@@ -822,12 +886,12 @@
     // Auto-open collapsible sections ("Why", patch notes) when navigated to
     // from the nav, when the page loads with their hash, or on hash changes.
     // Deep-linking a specific version (#patch-v0.2.2) expands only that one;
-    // a plain load or #patchnotes expands the latest (v0.4).
+    // a plain load or #patchnotes expands the latest (v0.5).
     function openFromHash() {
       var hash = location.hash.replace("#", "");
       var patchPanel = document.getElementById("patchDetails");
       var versions = document.querySelectorAll("#patchDetails details");
-      var latest = document.getElementById("patch-v0.4");
+      var latest = document.getElementById("patch-v0.5");
 
       if (hash.indexOf("patch-v") === 0) {
         var target = document.getElementById(hash);
@@ -1172,7 +1236,8 @@
       "Cleaver": "img/cleaver.png",
       "Mace": "img/mace.png",
       "Dagger": "img/dagger.png",
-      "Shortsword": "img/shortsword.png"
+      "Shortsword": "img/shortsword.png",
+      "Messer": "img/messer.png"
     };
 
     var noteSvg = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
@@ -1415,7 +1480,7 @@
       var sec = meleeSecondary(w);
       if (!sec) return "";
       var icon = ICONS[sec.name] ? '<img src="' + ICONS[sec.name] + '" alt="" class="wicon h-9 w-auto object-contain" loading="lazy" />' : "";
-      var nimble = sec.nimble ? tag("Nimble", "nimble", NIMBLE_TIP) : "";
+      var nimble = sec.nimble ? tag("+5%", "nimble", NIMBLE_TIP) : "";
       return '<div class="sec-block mt-3" data-sec-block>' +
         '<button type="button" class="sec-toggle" data-sec-toggle aria-expanded="false">' +
           icon +
@@ -1444,7 +1509,7 @@
           '<span class="min-w-0">' +
             '<span class="flex flex-wrap items-center gap-x-2 gap-y-0.5">' +
               '<span class="text-sm font-bold text-white">' + w.name + "</span>" +
-              (w.nimble ? tag("Nimble", "nimble", NIMBLE_TIP) : "") +
+              (w.nimble ? tag("+5%", "nimble", NIMBLE_TIP) : "") +
             "</span>" +
             extrasTags(w) +
           "</span>" +
@@ -1595,5 +1660,6 @@
     applyFilters();
   })();
   </script>
+  <script src="motd-export.js"></script>
 </body>
 </html>

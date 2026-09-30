@@ -1,0 +1,57 @@
+/* The regular guide is unchanged; these rules apply only to ?motd=1. */
+html.motd-mode { background: #0b0906; scroll-behavior: auto; }
+.motd-mode body { margin: 0; background: transparent !important; }
+.motd-mode body > header, .motd-mode body > footer,
+.motd-mode .bg-aurora, .motd-mode #whereModal, .motd-mode #cktip { display: none !important; }
+.motd-mode #top {
+  box-sizing: border-box; width: 1260px; max-width: none !important;
+  margin: 0 auto; padding: 8px 0; background: transparent !important;
+  color-scheme: only light; forced-color-adjust: none; pointer-events: none;
+}
+.motd-mode #top * { forced-color-adjust: none; }
+.motd-mode #top > :not(#quickstart):not(#roster) { display: none !important; }
+.motd-mode #quickstart {
+  grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr) !important;
+  align-items: start !important; gap: 12px 24px !important;
+  padding-top: 0 !important; padding-bottom: 22px !important;
+}
+.motd-mode .motd-intro { display: flex; flex-direction: column; align-items: flex-start; }
+.motd-mode .motd-intro h1 { order: 0; margin: 0 !important; font-size: 36px !important; line-height: 1.15; }
+.motd-mode .motd-intro > span {
+  order: 1; margin-top: 10px; background: #241b12 !important;
+  border-color: #664121 !important;
+}
+.motd-mode .motd-intro > p { order: 2; margin-top: 12px !important; max-width: 440px; font-size: 16px !important; }
+.motd-mode .motd-intro > div { display: none !important; }
+.motd-mode #newlyUpdated > span:last-child {
+  background: #112b22 !important; border-color: #225d45 !important; color: #6ee7b7 !important;
+}
+.motd-mode .motd-instructions { gap: 8px !important; }
+.motd-mode .motd-instructions > div { padding: 12px !important; }
+.motd-mode .motd-alert {
+  grid-column: 1 / -1; margin: 0; padding: 10px 14px !important;
+  background: linear-gradient(90deg, #291516, #16100f) !important;
+}
+.motd-mode #roster { padding-bottom: 0 !important; }
+.motd-mode #roster > div:first-child { display: block !important; margin-bottom: 12px !important; }
+.motd-mode .motd-roster-title { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
+.motd-mode #roster h2 { margin: 0; font-size: 28px !important; line-height: 1.2; }
+.motd-mode #count { flex: none; font-size: 12px; color: #aca17f; }
+.motd-mode #roster .legend { margin-top: 8px !important; }
+.motd-mode #roster .motd-search, .motd-mode #roster .motd-damage-legend,
+.motd-mode .htk-legend, .motd-mode noscript,
+.motd-mode .chev, .motd-mode .sec-chev, .motd-mode .expander { display: none !important; }
+.motd-mode #cards { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 12px !important; }
+.motd-mode .lift { transform: none !important; }
+.motd-mode #gsLink { text-decoration: none !important; }
+.motd-mode #top *, .motd-mode #top *::before, .motd-mode #top *::after { animation: none !important; transition: none !important; }
+.motd-mode .legend .pip.p3 { background: linear-gradient(180deg, #493321, #302218) !important; border-color: #b16c39 !important; color: #e58e4c !important; box-shadow: none !important; }
+.motd-mode .legend .pip.p2 { background: linear-gradient(180deg, #373125, #252118) !important; border-color: #756b50 !important; color: #b3a37b !important; }
+.motd-mode .legend .pip.p1 { background: #2b2924 !important; border-color: #99968d !important; color: #f8f5ec !important; }
+.motd-tools { box-sizing: border-box; width: 1260px; margin: 0 auto; padding: 16px; color: #efeBDD; font: 14px/1.5 system-ui, sans-serif; border-bottom: 1px solid #463f32; }
+.motd-tools button, .motd-tools a { border: 1px solid #ecad74; border-radius: 8px; padding: 9px 14px; color: #1c1812; background: #e58e4c; font-weight: 700; cursor: pointer !important; }
+.motd-tools a { display: inline-block; margin-left: 8px; background: transparent; color: #ecad74; text-decoration: none; }
+.motd-tools button:focus-visible, .motd-tools a:focus-visible { outline: 2px solid #efeBDD; outline-offset: 3px; }
+.motd-tools button:disabled { opacity: .55; }
+.motd-tools [role="status"] { margin-left: 12px; }
+.motd-tools p { margin: 8px 0 0; }

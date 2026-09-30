@@ -5,15 +5,15 @@
 // ── Classmod (the mod) ──
 // WEAPONS: one class per weapon. Damage arrays are [vs T3, vs T2, vs T1];
 // players have 100 HP. altMode: true → the weapon has a Normal/Alt pair on
-// mordstats.com (Executioner's and Maul have no alt). nimble: true → faster
-// movespeed than the standard (v0.4 movement rework; rendered as the Nimble
-// tag). HAND-AUTHORED — the
+// mordstats.com (Executioner's and Maul have no alt). nimble: true → +5%
+// movespeed (CashTweaks WeaponSpeedModifiers; rendered as the +5% tag).
+// HAND-AUTHORED — the
 // generators below never touch it. HTK flavor tooltips are NOT stored here —
 // they are generated from the tables at render time (htkTip() in index.html),
 // so they can never drift from the values.
 // SECONDARIES: the melee secondary weapons carried via the classes' extras
 // tags. Same encoding and same altMode rule as WEAPONS; nimble: true →
-// holding it grants the faster movespeed (Nimble tag next to that secondary).
+// holding it grants the +5% movespeed (+5% tag next to that secondary).
 // HAND-AUTHORED —
 // see the provenance comment above the array.
 // WEAPON_TIMINGS: w = windup (ms), r = release (ms), rec = miss recovery (ms),
@@ -39,6 +39,13 @@ var WEAPONS = [
           strike: { head: [60, 61, 63], body: [45, 46, 48] },
           stab:    { head: [45, 65, 83], body: [35, 50, 68] }
         } },
+      { name: "Messer", armor: [3, 3, 3], altMode: true, nimble: true,
+        strike: { head: [48, 62, 75], body: [40, 52, 60] },
+        stab:    { head: [30, 35, 45], body: [20, 25, 35] },
+        alt: {
+          strike: { head: [48, 62, 75], body: [40, 52, 60] },
+          stab:    { head: [30, 35, 45], body: [20, 25, 35] }
+        } },
       { name: "Longsword", armor: [2, 3, 3], altMode: true, extras: "+ Cleaver | Fury",
         strike: { head: [52, 55, 70], body: [36, 40, 52] },
         stab:    { head: [52, 55, 70], body: [36, 40, 52] },
@@ -53,7 +60,7 @@ var WEAPONS = [
           strike: { head: [60, 71, 100], body: [45, 51, 75] },
           stab:    { head: [35, 40, 50], body: [20, 25, 33] }
         } },
-      { name: "Bastard Sword", armor: [2, 3, 3], altMode: true, nimble: true, extras: "+ Mace, Firepot | Second Wind",
+      { name: "Bastard Sword", armor: [2, 3, 3], altMode: true, extras: "+ Mace, Firepot | Second Wind",
         strike: { head: [38, 42, 60], body: [34, 37, 50] },
         stab:    { head: [38, 42, 60], body: [34, 37, 50] },
         alt: {
@@ -138,6 +145,7 @@ var SECONDARIES = [
 var WEAPON_TIMINGS = {
   "Greatsword": {"strike":{"w":575,"r":525,"rec":1000,"t":[257,180],"cw":175},"stab":{"w":675,"r":325,"rec":1000,"t":[284,198],"cw":250},"altStrike":{"w":575,"r":500,"rec":850,"t":[262.5,183.75],"cw":200},"altStab":{"w":600,"r":350,"rec":700,"t":[300,210],"cw":125}},
   "Poleaxe": {"strike":{"w":550,"r":500,"rec":900,"t":[263,184],"cw":175},"stab":{"w":650,"r":325,"rec":900,"t":[315,220],"cw":225},"altStrike":{"w":600,"r":500,"rec":1000,"t":[252,176],"cw":200},"altStab":{"w":650,"r":325,"rec":900,"t":[305,213],"cw":225}},
+  "Messer": {"strike":{"w":540,"r":525,"rec":850,"t":[263,184],"cw":150},"stab":{"w":625,"r":350,"rec":850,"t":[289,202],"cw":225},"altStrike":{"w":540,"r":500,"rec":1000,"t":[250,175],"cw":175},"altStab":{"w":625,"r":325,"rec":1000,"t":[275,192.5],"cw":225}},
   "Longsword": {"strike":{"w":560,"r":525,"rec":850,"t":[266,187],"cw":150},"stab":{"w":615,"r":350,"rec":850,"t":[299,209],"cw":200},"altStrike":{"w":540,"r":500,"rec":700,"t":[275,192.5],"cw":200},"altStab":{"w":550,"r":350,"rec":700,"t":[312.5,218.75],"cw":225}},
   "Bardiche": {"strike":{"w":625,"r":500,"rec":900,"t":[257,180],"cw":175},"stab":{"w":625,"r":350,"rec":900,"t":[289,202],"cw":250},"altStrike":{"w":675,"r":475,"rec":1000,"t":[257,180],"nc":true},"altStab":{"w":650,"r":325,"rec":1000,"t":[263,184],"nc":true}},
   "Bastard Sword": {"strike":{"w":525,"r":475,"rec":1000,"t":[287.5,201.25],"cw":150},"stab":{"w":575,"r":325,"rec":1000,"t":[325,227.5],"cw":225},"altStrike":{"w":525,"r":525,"rec":700,"t":[287.5,201.25],"cw":150},"altStab":{"w":575,"r":350,"rec":700,"t":[325,227.5],"cw":225}},
@@ -165,6 +173,7 @@ var WEAPON_TIMINGS = {
 var VANILLA = {
   "Greatsword": {"strike":{"head":[48,60,80],"body":[38,43,65],"legs":[34,34,55]},"stab":{"head":[45,65,75],"body":[35,50,60],"legs":[25,35,50]},"alt":{"strike":{"head":[45,49,65],"body":[30,34,50],"legs":[27,31,40]},"stab":{"head":[45,66,75],"body":[40,51,60],"legs":[35,46,50]}}},
   "Poleaxe": {"strike":{"head":[48,53,78],"body":[35,38,63],"legs":[34,36,53]},"stab":{"head":[45,65,83],"body":[35,50,68],"legs":[20,35,53]},"alt":{"strike":{"head":[60,61,63],"body":[45,46,48],"legs":[40,41,43]},"stab":{"head":[45,65,83],"body":[35,50,68],"legs":[20,35,53]}}},
+  "Messer": {"strike":{"head":[48,62,75],"body":[40,52,60],"legs":[34,42,50]},"stab":{"head":[30,35,45],"body":[20,25,35],"legs":[15,20,30]},"alt":{"strike":{"head":[48,62,75],"body":[40,52,60],"legs":[34,42,50]},"stab":{"head":[30,35,45],"body":[20,25,35],"legs":[15,20,30]}}},
   "Longsword": {"strike":{"head":[44,53,83],"body":[36,38,68],"legs":[34,36,58]},"stab":{"head":[43,60,70],"body":[34,45,55],"legs":[30,35,50]},"alt":{"strike":{"head":[60,61,63],"body":[40,41,43],"legs":[35,36,38]},"stab":{"head":[40,41,43],"body":[25,26,28],"legs":[15,16,18]}}},
   "Bardiche": {"strike":{"head":[60,71,100],"body":[45,51,75],"legs":[40,45,65]},"stab":{"head":[35,40,50],"body":[20,25,33],"legs":[15,20,28]},"alt":{"strike":{"head":[60,71,100],"body":[45,51,75],"legs":[40,45,65]},"stab":{"head":[35,40,50],"body":[20,25,33],"legs":[15,20,28]}}},
   "Bastard Sword": {"strike":{"head":[38,42,80],"body":[34,37,65],"legs":[30,34,60]},"stab":{"head":[45,60,90],"body":[38,45,75],"legs":[28,35,65]},"alt":{"strike":{"head":[38,42,80],"body":[34,37,65],"legs":[30,34,60]},"stab":{"head":[45,60,90],"body":[38,45,75],"legs":[28,35,65]}}},
@@ -185,6 +194,7 @@ var VANILLA = {
 var VANILLA_TIMINGS = {
   "Greatsword": {"strike":{"w":575,"r":500,"rec":700,"t":[245,171.5],"cw":200},"stab":{"w":675,"r":325,"rec":700,"t":[270,189],"cw":250},"altStrike":{"w":575,"r":500,"rec":550,"t":[262.5,183.75],"cw":200},"altStab":{"w":600,"r":350,"rec":400,"t":[300,210],"cw":125}},
   "Poleaxe": {"strike":{"w":550,"r":500,"rec":600,"t":[250,175],"cw":175},"stab":{"w":625,"r":325,"rec":600,"t":[300,210],"cw":225},"altStrike":{"w":600,"r":500,"rec":700,"t":[240,168],"cw":200},"altStab":{"w":625,"r":325,"rec":600,"t":[290,203],"cw":225}},
+  "Messer": {"strike":{"w":540,"r":500,"rec":550,"t":[250,175],"cw":150},"stab":{"w":625,"r":350,"rec":550,"t":[275,192.5],"cw":225},"altStrike":{"w":540,"r":500,"rec":700,"t":[250,175],"cw":175},"altStab":{"w":625,"r":325,"rec":700,"t":[275,192.5],"cw":225}},
   "Longsword": {"strike":{"w":560,"r":500,"rec":550,"t":[253.75,177.625],"cw":150},"stab":{"w":615,"r":350,"rec":550,"t":[285,199.5],"cw":200},"altStrike":{"w":540,"r":500,"rec":400,"t":[275,192.5],"cw":200},"altStab":{"w":550,"r":350,"rec":400,"t":[312.5,218.75],"cw":225}},
   "Bardiche": {"strike":{"w":625,"r":500,"rec":600,"t":[245,171.5],"cw":175},"stab":{"w":625,"r":350,"rec":600,"t":[275,192.5],"cw":250},"altStrike":{"w":675,"r":475,"rec":700,"t":[245,171.5],"nc":true},"altStab":{"w":650,"r":325,"rec":700,"t":[250,175],"nc":true}},
   "Bastard Sword": {"strike":{"w":525,"r":475,"rec":700,"t":[287.5,201.25],"cw":150},"stab":{"w":575,"r":325,"rec":700,"t":[325,227.5],"cw":225},"altStrike":{"w":525,"r":500,"rec":400,"t":[287.5,201.25],"cw":150},"altStab":{"w":575,"r":350,"rec":400,"t":[325,227.5],"cw":225}},
@@ -203,8 +213,8 @@ var VANILLA_TIMINGS = {
 };
 
 // ── Promod (ProClasses) ──
-// Pulled from https://kingkuess.github.io/ProClasses/weapons (page v1.0.3,
-// "promod base + Season 6 tuning", generated 2026-09-01) on 2026-09-04 by
+// Pulled from https://kingkuess.github.io/ProClasses/weapons (page v1.0.4,
+// "promod base + Season 6 tuning", generated 2026-09-26) on 2026-09-27 by
 // _work/gen-promod.mjs — re-run that script on a fresh page save to refresh.
 // Same shapes/encodings as the classmod data; timings additionally carry
 // rec (miss recovery, ms), feint, stam and missStam, which the site does
@@ -223,6 +233,7 @@ var PROMOD = {
   "Zweihander": {"strike":{"head":[60,70,100],"body":[40,55,85],"legs":[34,40,65]},"stab":{"head":[60,70,75],"body":[40,55,60],"legs":[35,45,50]},"alt":{"strike":{"head":[44,52,70],"body":[34,37,55],"legs":[31,34,40]},"stab":{"head":[48,70,78],"body":[40,55,63],"legs":[35,45,53]}}},
   "Estoc": {"strike":{"head":[35,38,60],"body":[25,28,50],"legs":[25,25,40]},"stab":{"head":[50,66,100],"body":[40,51,65],"legs":[40,41,55]},"alt":{"strike":{"head":[60,61,63],"body":[40,41,43],"legs":[35,36,38]},"stab":{"head":[40,41,43],"body":[25,26,28],"legs":[15,16,18]}}},
   "Poleaxe": {"strike":{"head":[48,53,78],"body":[35,38,63],"legs":[34,36,53]},"stab":{"head":[45,65,83],"body":[35,50,68],"legs":[35,35,53]},"alt":{"strike":{"head":[60,61,63],"body":[45,46,48],"legs":[40,41,43]},"stab":{"head":[45,65,83],"body":[35,50,68],"legs":[20,35,53]}}},
+  "Messer": {"strike":{"head":[48,62,75],"body":[40,52,60],"legs":[34,42,50]},"stab":{"head":[30,35,45],"body":[20,25,35],"legs":[20,25,30]},"alt":{"strike":{"head":[48,62,75],"body":[40,52,60],"legs":[34,42,50]},"stab":{"head":[30,35,45],"body":[20,25,35],"legs":[15,20,30]}}},
   "Mace": {"strike":{"head":[60,71,100],"body":[50,51,52],"legs":[46,48,50]},"stab":{"head":[30,32,33],"body":[20,22,23],"legs":[10,12,13]}},
   "Warhammer": {"strike":{"head":[55,56,57],"body":[40,41,42],"legs":[35,36,39]},"stab":{"head":[30,31,33],"body":[20,21,23],"legs":[10,11,13]},"alt":{"strike":{"head":[65,76,77],"body":[35,36,37],"legs":[30,31,34]},"stab":{"head":[30,31,33],"body":[20,21,23],"legs":[10,11,13]}}}
 };
@@ -240,6 +251,7 @@ var PROMOD_TIMINGS = {
   "Zweihander": {"strike":{"w":650,"r":535,"rec":1000,"feint":300,"stam":20,"missStam":16,"t":[252,176],"cw":150},"stab":{"w":725,"r":325,"rec":1000,"feint":300,"stam":19,"missStam":15,"t":[276,193],"cw":225},"altStrike":{"w":600,"r":500,"rec":850,"feint":350,"stam":18,"missStam":14,"t":[262.5,183.75],"cw":175},"altStab":{"w":625,"r":350,"rec":700,"feint":325,"stam":19,"missStam":13,"t":[300,210],"cw":125}},
   "Estoc": {"strike":{"w":525,"r":500,"rec":900,"feint":400,"stam":16,"missStam":8,"t":[289,202],"cw":200},"stab":{"w":625,"r":350,"rec":900,"feint":325,"stam":18,"missStam":11,"t":[284,198],"cw":200},"altStrike":{"w":600,"r":500,"rec":700,"feint":350,"stam":18,"missStam":11,"t":[262.5,183.75],"cw":250},"altStab":{"w":575,"r":325,"rec":700,"feint":375,"stam":17,"missStam":10,"t":[300,210],"cw":250}},
   "Poleaxe": {"strike":{"w":550,"r":500,"rec":900,"feint":350,"stam":18,"missStam":12,"t":[263,184],"cw":200},"stab":{"w":650,"r":325,"rec":900,"feint":325,"stam":18,"missStam":12,"t":[315,220],"cw":250},"altStrike":{"w":600,"r":500,"rec":1000,"feint":325,"stam":19,"missStam":12,"t":[252,176],"cw":225},"altStab":{"w":650,"r":325,"rec":900,"feint":325,"stam":18,"missStam":9,"t":[305,213],"cw":250}},
+  "Messer": {"strike":{"w":525,"r":525,"rec":850,"feint":375,"stam":20,"missStam":13,"t":[263,184],"cw":150},"stab":{"w":625,"r":350,"rec":850,"feint":375,"stam":17,"missStam":12,"t":[289,202],"cw":225},"altStrike":{"w":540,"r":525,"rec":1000,"feint":375,"stam":19,"missStam":13,"t":[250,175],"cw":175},"altStab":{"w":625,"r":325,"rec":1000,"feint":375,"stam":17,"missStam":12,"t":[275,192.5],"cw":225}},
   "Mace": {"strike":{"w":600,"r":475,"rec":900,"feint":325,"stam":19,"missStam":13,"t":[275,192.5],"cw":200},"stab":{"w":550,"r":350,"rec":900,"feint":400,"stam":17,"missStam":7,"t":[300,210],"cw":250}},
   "Warhammer": {"strike":{"w":500,"r":475,"rec":700,"feint":400,"stam":19,"missStam":10,"t":[287.5,201.25],"cw":225},"stab":{"w":500,"r":350,"rec":700,"feint":400,"stam":18,"missStam":9,"t":[312.5,218.75],"cw":275},"altStrike":{"w":500,"r":475,"rec":700,"feint":400,"stam":19,"missStam":10,"t":[287.5,201.25],"nc":true},"altStab":{"w":500,"r":350,"rec":700,"feint":400,"stam":18,"missStam":9,"t":[312.5,218.75],"nc":true}}
 };
