@@ -17,17 +17,22 @@
 // HAND-AUTHORED —
 // see the provenance comment above the array.
 // WEAPON_TIMINGS: w = windup (ms), r = release (ms), rec = miss recovery (ms),
-// t = turncaps [x, y], cw = combo-windup increase (omit and set nc: true when
-// the attack cannot combo). Fully Blueprint-derived; regenerate with
-// _work/gen-weapon-data.mjs (needs a fresh CDO export) — verify everything
-// with _work/compare-site.mjs (the /verify-stats command). The modded
-// secondaries (Mace, Warhammer) are in here too; the untouched ones
-// (Shortsword, Cleaver, Dagger) equal vanilla — see the comment below.
+// hrec = hit recovery (ms — how fast you can attack again after hitting a
+// player, without comboing), t = turncaps [x, y], cw = combo-windup increase
+// (omit and set nc: true when the attack cannot combo). Everything except
+// hrec is Blueprint-derived; regenerate with _work/gen-weapon-data.mjs (needs
+// a fresh CDO export), then re-run _work/add-hit-recovery.mjs — hrec is NOT
+// in the export, it is hand-authored from the mod v0.5 patch notes (flat 400
+// except: Maul 100, Executioner's 250, Zweihander & Spear 275, Halberd &
+// Bardiche 300). Verify everything with _work/compare-site.mjs (the
+// /verify-stats command). The modded secondaries (Mace, Warhammer) are in
+// here too; the untouched ones (Shortsword, Cleaver, Dagger) equal vanilla —
+// see the comment below.
 
 var WEAPONS = [
       { name: "Greatsword", armor: [3, 3, 3], altMode: true, extras: "+ Shortsword",
         strike: { head: [52, 60, 70], body: [36, 38, 52] },
-        stab:    { head: [52, 60, 70], body: [36, 38, 52] },
+        stab:    { head: [48, 60, 70], body: [36, 38, 52] },
         alt: {
           strike: { head: [45, 49, 65], body: [30, 34, 50] },
           stab:    { head: [45, 66, 75], body: [40, 51, 60] }
@@ -40,7 +45,7 @@ var WEAPONS = [
           stab:    { head: [45, 65, 83], body: [35, 50, 68] }
         } },
       { name: "Messer", armor: [3, 3, 3], altMode: true, nimble: true,
-        strike: { head: [48, 62, 75], body: [40, 52, 60] },
+        strike: { head: [50, 62, 75], body: [40, 52, 60] },
         stab:    { head: [30, 35, 45], body: [20, 25, 35] },
         alt: {
           strike: { head: [48, 62, 75], body: [40, 52, 60] },
@@ -85,8 +90,8 @@ var WEAPONS = [
         strike: { head: [60, 70, 100], body: [40, 60, 80] },
         stab:    { head: [50, 52, 75], body: [35, 45, 60] },
         alt: {
-          strike: { head: [58, 70, 100], body: [40, 60, 80] },
-          stab:    { head: [50, 52, 75], body: [35, 45, 60] }
+          strike: { head: [60, 70, 100], body: [40, 60, 80] },
+          stab:    { head: [40, 52, 75], body: [35, 45, 60] }
         } },
       { name: "Executioner's", armor: [1, 2, 2], nimble: true,
         strike: { head: [60, 70, 100], body: [50, 60, 70] },
@@ -143,24 +148,24 @@ var SECONDARIES = [
 });
 
 var WEAPON_TIMINGS = {
-  "Greatsword": {"strike":{"w":575,"r":525,"rec":1000,"t":[257,180],"cw":175},"stab":{"w":675,"r":325,"rec":1000,"t":[284,198],"cw":250},"altStrike":{"w":575,"r":500,"rec":850,"t":[262.5,183.75],"cw":200},"altStab":{"w":600,"r":350,"rec":700,"t":[300,210],"cw":125}},
-  "Poleaxe": {"strike":{"w":550,"r":500,"rec":900,"t":[263,184],"cw":175},"stab":{"w":650,"r":325,"rec":900,"t":[315,220],"cw":225},"altStrike":{"w":600,"r":500,"rec":1000,"t":[252,176],"cw":200},"altStab":{"w":650,"r":325,"rec":900,"t":[305,213],"cw":225}},
-  "Messer": {"strike":{"w":540,"r":525,"rec":850,"t":[263,184],"cw":150},"stab":{"w":625,"r":350,"rec":850,"t":[289,202],"cw":225},"altStrike":{"w":540,"r":500,"rec":1000,"t":[250,175],"cw":175},"altStab":{"w":625,"r":325,"rec":1000,"t":[275,192.5],"cw":225}},
-  "Longsword": {"strike":{"w":560,"r":525,"rec":850,"t":[266,187],"cw":150},"stab":{"w":615,"r":350,"rec":850,"t":[299,209],"cw":200},"altStrike":{"w":540,"r":500,"rec":700,"t":[275,192.5],"cw":200},"altStab":{"w":550,"r":350,"rec":700,"t":[312.5,218.75],"cw":225}},
-  "Bardiche": {"strike":{"w":625,"r":500,"rec":900,"t":[257,180],"cw":175},"stab":{"w":625,"r":350,"rec":900,"t":[289,202],"cw":250},"altStrike":{"w":675,"r":475,"rec":1000,"t":[257,180],"nc":true},"altStab":{"w":650,"r":325,"rec":1000,"t":[263,184],"nc":true}},
-  "Bastard Sword": {"strike":{"w":525,"r":475,"rec":1000,"t":[287.5,201.25],"cw":150},"stab":{"w":575,"r":325,"rec":1000,"t":[325,227.5],"cw":225},"altStrike":{"w":525,"r":525,"rec":700,"t":[287.5,201.25],"cw":150},"altStab":{"w":575,"r":350,"rec":700,"t":[325,227.5],"cw":225}},
-  "Spear": {"strike":{"w":625,"r":475,"rec":1100,"t":[249,175],"nc":true},"stab":{"w":650,"r":350,"rec":1000,"t":[252,176],"nc":true},"altStrike":{"w":575,"r":450,"rec":1000,"t":[284,198],"cw":100},"altStab":{"w":575,"r":350,"rec":1000,"t":[284,198],"cw":200}},
-  "Eveningstar": {"strike":{"w":675,"r":500,"rec":1000,"t":[245,171],"cw":175},"stab":{"w":625,"r":325,"rec":1000,"t":[278,195],"cw":275},"altStrike":{"w":650,"r":450,"rec":900,"t":[262.5,183.75],"cw":175},"altStab":{"w":675,"r":300,"rec":900,"t":[275,192.5],"cw":275}},
-  "Halberd": {"strike":{"w":625,"r":500,"rec":1000,"t":[257,180],"cw":125},"stab":{"w":675,"r":325,"rec":1000,"t":[276,193],"cw":175},"altStrike":{"w":675,"r":500,"rec":1100,"t":[245,171.5],"nc":true},"altStab":{"w":700,"r":325,"rec":1100,"t":[249,175],"nc":true}},
-  "Executioner's": {"strike":{"w":650,"r":500,"rec":1100,"t":[247,173],"nc":true},"stab":{"w":625,"r":350,"rec":1100,"t":[270,189],"nc":true}},
-  "Maul": {"strike":{"w":725,"r":475,"rec":1000,"t":[268,187],"nc":true},"stab":{"w":650,"r":325,"rec":1000,"t":[263,184],"nc":true}},
-  "Zweihander": {"strike":{"w":650,"r":525,"rec":1000,"t":[252,176],"cw":100},"stab":{"w":725,"r":325,"rec":1000,"t":[276,193],"cw":225},"altStrike":{"w":600,"r":500,"rec":850,"t":[262.5,183.75],"cw":175},"altStab":{"w":625,"r":350,"rec":700,"t":[300,210],"cw":125}},
-  "Estoc": {"strike":{"w":525,"r":500,"rec":900,"t":[289,202],"cw":175},"stab":{"w":625,"r":350,"rec":900,"t":[284,198],"cw":175},"altStrike":{"w":600,"r":500,"rec":700,"t":[262.5,183.75],"cw":225},"altStab":{"w":575,"r":325,"rec":700,"t":[300,210],"cw":225}},
-  "Mace": {"strike":{"w":600,"r":500,"rec":900,"t":[275,192.5],"cw":200},"stab":{"w":600,"r":350,"rec":900,"t":[300,210],"cw":250}},
-  "Warhammer": {"strike":{"w":500,"r":475,"rec":700,"t":[287.5,201.25],"cw":225},"stab":{"w":500,"r":350,"rec":700,"t":[312.5,218.75],"cw":275},"altStrike":{"w":500,"r":475,"rec":700,"t":[287.5,201.25],"nc":true},"altStab":{"w":500,"r":350,"rec":700,"t":[312.5,218.75],"nc":true}},
-  "Shortsword": {"strike":{"w":475,"r":450,"rec":400,"t":[325,227.5],"cw":200},"stab":{"w":475,"r":350,"rec":400,"t":[325,227.5],"cw":225}},
-  "Cleaver": {"strike":{"w":475,"r":450,"rec":400,"t":[300,210],"cw":200},"stab":{"w":525,"r":350,"rec":400,"t":[300,210],"cw":225}},
-  "Dagger": {"strike":{"w":400,"r":425,"rec":400,"t":[325,227.5],"cw":225},"stab":{"w":400,"r":350,"rec":400,"t":[325,227.5],"cw":200}}
+  "Greatsword": {"strike":{"w":575,"r":515,"rec":1000,"hrec":400,"t":[257,180],"cw":185},"stab":{"w":675,"r":325,"rec":1000,"hrec":400,"t":[284,198],"cw":250},"altStrike":{"w":575,"r":500,"rec":850,"hrec":400,"t":[262.5,183.75],"cw":200},"altStab":{"w":600,"r":350,"rec":700,"hrec":400,"t":[300,210],"cw":125}},
+  "Poleaxe": {"strike":{"w":550,"r":500,"rec":900,"hrec":400,"t":[263,184],"cw":175},"stab":{"w":650,"r":325,"rec":900,"hrec":400,"t":[315,220],"cw":225},"altStrike":{"w":600,"r":500,"rec":1000,"hrec":400,"t":[252,176],"cw":200},"altStab":{"w":650,"r":325,"rec":900,"hrec":400,"t":[305,213],"cw":225}},
+  "Messer": {"strike":{"w":525,"r":500,"rec":850,"hrec":400,"t":[273.5,191.5],"cw":135},"stab":{"w":625,"r":350,"rec":850,"hrec":400,"t":[289,202],"cw":225},"altStrike":{"w":540,"r":500,"rec":1000,"hrec":400,"t":[250,175],"cw":175},"altStab":{"w":625,"r":325,"rec":1000,"hrec":400,"t":[275,192.5],"cw":225}},
+  "Longsword": {"strike":{"w":575,"r":525,"rec":850,"hrec":400,"t":[266,187],"cw":150},"stab":{"w":625,"r":350,"rec":850,"hrec":400,"t":[299,209],"cw":200},"altStrike":{"w":540,"r":500,"rec":700,"hrec":400,"t":[275,192.5],"cw":200},"altStab":{"w":550,"r":350,"rec":700,"hrec":400,"t":[312.5,218.75],"cw":225}},
+  "Bardiche": {"strike":{"w":600,"r":500,"rec":900,"hrec":300,"t":[257,180],"cw":175},"stab":{"w":625,"r":350,"rec":900,"hrec":300,"t":[289,202],"cw":250},"altStrike":{"w":675,"r":475,"rec":1000,"hrec":300,"t":[257,180],"nc":true},"altStab":{"w":650,"r":325,"rec":1000,"hrec":300,"t":[263,184],"nc":true}},
+  "Bastard Sword": {"strike":{"w":525,"r":475,"rec":1000,"hrec":400,"t":[266,187],"cw":150},"stab":{"w":575,"r":325,"rec":1000,"hrec":400,"t":[299,209],"cw":225},"altStrike":{"w":525,"r":525,"rec":700,"hrec":400,"t":[287.5,201.25],"cw":150},"altStab":{"w":575,"r":350,"rec":700,"hrec":400,"t":[325,227.5],"cw":225}},
+  "Spear": {"strike":{"w":600,"r":475,"rec":1100,"hrec":275,"t":[249,175],"nc":true},"stab":{"w":650,"r":350,"rec":1000,"hrec":275,"t":[252,176],"nc":true},"altStrike":{"w":575,"r":450,"rec":1000,"hrec":275,"t":[284,198],"cw":100},"altStab":{"w":575,"r":350,"rec":1000,"hrec":275,"t":[284,198],"cw":200}},
+  "Eveningstar": {"strike":{"w":650,"r":500,"rec":1000,"hrec":400,"t":[245,171],"cw":175},"stab":{"w":625,"r":325,"rec":1000,"hrec":400,"t":[278,195],"cw":275},"altStrike":{"w":650,"r":450,"rec":900,"hrec":400,"t":[262.5,183.75],"cw":175},"altStab":{"w":675,"r":300,"rec":900,"hrec":400,"t":[275,192.5],"cw":275}},
+  "Halberd": {"strike":{"w":625,"r":500,"rec":1000,"hrec":300,"t":[257,180],"cw":125},"stab":{"w":675,"r":325,"rec":1000,"hrec":300,"t":[276,193],"cw":175},"altStrike":{"w":675,"r":500,"rec":1100,"hrec":300,"t":[245,171.5],"nc":true},"altStab":{"w":675,"r":325,"rec":1100,"hrec":300,"t":[249,175],"nc":true}},
+  "Executioner's": {"strike":{"w":650,"r":500,"rec":1100,"hrec":250,"t":[247,173],"nc":true},"stab":{"w":625,"r":350,"rec":1100,"hrec":250,"t":[270,189],"nc":true}},
+  "Maul": {"strike":{"w":725,"r":475,"rec":1000,"hrec":100,"t":[268,187],"nc":true},"stab":{"w":650,"r":325,"rec":1000,"hrec":100,"t":[263,184],"nc":true}},
+  "Zweihander": {"strike":{"w":650,"r":525,"rec":1000,"hrec":275,"t":[252,176],"cw":100},"stab":{"w":725,"r":325,"rec":1000,"hrec":275,"t":[276,193],"cw":225},"altStrike":{"w":600,"r":500,"rec":850,"hrec":275,"t":[262.5,183.75],"cw":175},"altStab":{"w":625,"r":350,"rec":700,"hrec":275,"t":[300,210],"cw":125}},
+  "Estoc": {"strike":{"w":525,"r":500,"rec":900,"hrec":400,"t":[289,202],"cw":175},"stab":{"w":625,"r":350,"rec":900,"hrec":400,"t":[284,198],"cw":175},"altStrike":{"w":600,"r":500,"rec":700,"hrec":400,"t":[262.5,183.75],"cw":225},"altStab":{"w":575,"r":325,"rec":700,"hrec":400,"t":[300,210],"cw":225}},
+  "Mace": {"strike":{"w":600,"r":500,"rec":900,"hrec":400,"t":[275,192.5],"cw":200},"stab":{"w":600,"r":350,"rec":900,"hrec":400,"t":[300,210],"cw":250}},
+  "Warhammer": {"strike":{"w":500,"r":500,"rec":700,"hrec":400,"t":[287.5,201.25],"cw":225},"stab":{"w":500,"r":350,"rec":700,"hrec":400,"t":[312.5,218.75],"cw":275},"altStrike":{"w":500,"r":475,"rec":700,"hrec":400,"t":[287.5,201.25],"nc":true},"altStab":{"w":500,"r":350,"rec":700,"hrec":400,"t":[312.5,218.75],"nc":true}},
+  "Shortsword": {"strike":{"w":475,"r":450,"rec":400,"hrec":400,"t":[325,227.5],"cw":200},"stab":{"w":475,"r":350,"rec":400,"hrec":400,"t":[325,227.5],"cw":225}},
+  "Cleaver": {"strike":{"w":475,"r":450,"rec":400,"hrec":400,"t":[300,210],"cw":200},"stab":{"w":525,"r":350,"rec":400,"hrec":400,"t":[300,210],"cw":225}},
+  "Dagger": {"strike":{"w":400,"r":425,"rec":400,"hrec":400,"t":[325,227.5],"cw":225},"stab":{"w":400,"r":350,"rec":400,"hrec":400,"t":[325,227.5],"cw":200}}
 };
 
 // ── Vanilla (unmodded Mordhau baseline) ──
@@ -168,7 +173,8 @@ var WEAPON_TIMINGS = {
 // _work/gen-weapon-data.mjs — re-run that script to refresh.
 // Same shapes/encodings as the classmod data. The Body row is torso damage;
 // vanilla leg damage differs (the mod makes legs equal torso). Covers the
-// roster AND all five secondaries.
+// roster AND all five secondaries. hrec (flat 400 — unmodded hit recovery)
+// is not in the mordstats feed; it is hand-added by _work/add-hit-recovery.mjs.
 
 var VANILLA = {
   "Greatsword": {"strike":{"head":[48,60,80],"body":[38,43,65],"legs":[34,34,55]},"stab":{"head":[45,65,75],"body":[35,50,60],"legs":[25,35,50]},"alt":{"strike":{"head":[45,49,65],"body":[30,34,50],"legs":[27,31,40]},"stab":{"head":[45,66,75],"body":[40,51,60],"legs":[35,46,50]}}},
@@ -192,24 +198,24 @@ var VANILLA = {
 };
 
 var VANILLA_TIMINGS = {
-  "Greatsword": {"strike":{"w":575,"r":500,"rec":700,"t":[245,171.5],"cw":200},"stab":{"w":675,"r":325,"rec":700,"t":[270,189],"cw":250},"altStrike":{"w":575,"r":500,"rec":550,"t":[262.5,183.75],"cw":200},"altStab":{"w":600,"r":350,"rec":400,"t":[300,210],"cw":125}},
-  "Poleaxe": {"strike":{"w":550,"r":500,"rec":600,"t":[250,175],"cw":175},"stab":{"w":625,"r":325,"rec":600,"t":[300,210],"cw":225},"altStrike":{"w":600,"r":500,"rec":700,"t":[240,168],"cw":200},"altStab":{"w":625,"r":325,"rec":600,"t":[290,203],"cw":225}},
-  "Messer": {"strike":{"w":540,"r":500,"rec":550,"t":[250,175],"cw":150},"stab":{"w":625,"r":350,"rec":550,"t":[275,192.5],"cw":225},"altStrike":{"w":540,"r":500,"rec":700,"t":[250,175],"cw":175},"altStab":{"w":625,"r":325,"rec":700,"t":[275,192.5],"cw":225}},
-  "Longsword": {"strike":{"w":560,"r":500,"rec":550,"t":[253.75,177.625],"cw":150},"stab":{"w":615,"r":350,"rec":550,"t":[285,199.5],"cw":200},"altStrike":{"w":540,"r":500,"rec":400,"t":[275,192.5],"cw":200},"altStab":{"w":550,"r":350,"rec":400,"t":[312.5,218.75],"cw":225}},
-  "Bardiche": {"strike":{"w":625,"r":500,"rec":600,"t":[245,171.5],"cw":175},"stab":{"w":625,"r":350,"rec":600,"t":[275,192.5],"cw":250},"altStrike":{"w":675,"r":475,"rec":700,"t":[245,171.5],"nc":true},"altStab":{"w":650,"r":325,"rec":700,"t":[250,175],"nc":true}},
-  "Bastard Sword": {"strike":{"w":525,"r":475,"rec":700,"t":[287.5,201.25],"cw":150},"stab":{"w":575,"r":325,"rec":700,"t":[325,227.5],"cw":225},"altStrike":{"w":525,"r":500,"rec":400,"t":[287.5,201.25],"cw":150},"altStab":{"w":575,"r":350,"rec":400,"t":[325,227.5],"cw":225}},
-  "Spear": {"strike":{"w":625,"r":475,"rec":800,"t":[237.5,166.25],"nc":true},"stab":{"w":650,"r":325,"rec":700,"t":[240,168],"nc":true},"altStrike":{"w":575,"r":450,"rec":700,"t":[270,189],"cw":100},"altStab":{"w":575,"r":325,"rec":700,"t":[270,189],"cw":200}},
-  "Eveningstar": {"strike":{"w":675,"r":500,"rec":700,"t":[237.5,166.25],"cw":175},"stab":{"w":625,"r":325,"rec":700,"t":[270,189],"cw":275},"altStrike":{"w":650,"r":450,"rec":600,"t":[262.5,183.75],"cw":175},"altStab":{"w":675,"r":300,"rec":600,"t":[275,192.5],"cw":275}},
-  "Halberd": {"strike":{"w":625,"r":500,"rec":700,"t":[245,171.5],"cw":125},"stab":{"w":675,"r":325,"rec":700,"t":[262.5,183.75],"cw":175},"altStrike":{"w":675,"r":500,"rec":800,"t":[237.5,166.25],"nc":true},"altStab":{"w":700,"r":325,"rec":800,"t":[237.5,166.25],"nc":true}},
-  "Executioner's": {"strike":{"w":650,"r":500,"rec":800,"t":[240,168],"nc":true},"stab":{"w":625,"r":350,"rec":800,"t":[262.5,183.75],"nc":true}},
-  "Maul": {"strike":{"w":725,"r":475,"rec":700,"t":[255,178.5],"nc":true},"stab":{"w":650,"r":325,"rec":700,"t":[262.5,183.75],"nc":true}},
-  "Zweihander": {"strike":{"w":650,"r":525,"rec":700,"t":[240,168],"cw":150},"stab":{"w":725,"r":325,"rec":700,"t":[262.5,183.75],"cw":225},"altStrike":{"w":600,"r":500,"rec":550,"t":[262.5,183.75],"cw":175},"altStab":{"w":625,"r":350,"rec":400,"t":[300,210],"cw":125}},
-  "Estoc": {"strike":{"w":525,"r":500,"rec":600,"t":[275,192.5],"cw":175},"stab":{"w":565,"r":360,"rec":600,"t":[270,189],"cw":175},"altStrike":{"w":600,"r":500,"rec":400,"t":[262.5,183.75],"cw":225},"altStab":{"w":575,"r":325,"rec":400,"t":[300,210],"cw":225}},
-  "Shortsword": {"strike":{"w":475,"r":450,"rec":400,"t":[325,227.5],"cw":200},"stab":{"w":475,"r":350,"rec":400,"t":[325,227.5],"cw":225}},
-  "Warhammer": {"strike":{"w":500,"r":475,"rec":400,"t":[287.5,201.25],"cw":225},"stab":{"w":500,"r":350,"rec":400,"t":[312.5,218.75],"cw":275},"altStrike":{"w":500,"r":475,"rec":400,"t":[287.5,201.25],"nc":true},"altStab":{"w":500,"r":350,"rec":400,"t":[312.5,218.75],"nc":true}},
-  "Cleaver": {"strike":{"w":475,"r":450,"rec":400,"t":[300,210],"cw":200},"stab":{"w":525,"r":350,"rec":400,"t":[300,210],"cw":225}},
-  "Mace": {"strike":{"w":600,"r":475,"rec":600,"t":[275,192.5],"cw":200},"stab":{"w":550,"r":350,"rec":600,"t":[300,210],"cw":250}},
-  "Dagger": {"strike":{"w":400,"r":425,"rec":400,"t":[325,227.5],"cw":225},"stab":{"w":400,"r":350,"rec":400,"t":[325,227.5],"cw":200}}
+  "Greatsword": {"strike":{"w":575,"r":500,"rec":700,"hrec":400,"t":[245,171.5],"cw":200},"stab":{"w":675,"r":325,"rec":700,"hrec":400,"t":[270,189],"cw":250},"altStrike":{"w":575,"r":500,"rec":550,"hrec":400,"t":[262.5,183.75],"cw":200},"altStab":{"w":600,"r":350,"rec":400,"hrec":400,"t":[300,210],"cw":125}},
+  "Poleaxe": {"strike":{"w":550,"r":500,"rec":600,"hrec":400,"t":[250,175],"cw":175},"stab":{"w":625,"r":325,"rec":600,"hrec":400,"t":[300,210],"cw":225},"altStrike":{"w":600,"r":500,"rec":700,"hrec":400,"t":[240,168],"cw":200},"altStab":{"w":625,"r":325,"rec":600,"hrec":400,"t":[290,203],"cw":225}},
+  "Messer": {"strike":{"w":540,"r":500,"rec":550,"hrec":400,"t":[250,175],"cw":150},"stab":{"w":625,"r":350,"rec":550,"hrec":400,"t":[275,192.5],"cw":225},"altStrike":{"w":540,"r":500,"rec":700,"hrec":400,"t":[250,175],"cw":175},"altStab":{"w":625,"r":325,"rec":700,"hrec":400,"t":[275,192.5],"cw":225}},
+  "Longsword": {"strike":{"w":560,"r":500,"rec":550,"hrec":400,"t":[253.75,177.625],"cw":150},"stab":{"w":615,"r":350,"rec":550,"hrec":400,"t":[285,199.5],"cw":200},"altStrike":{"w":540,"r":500,"rec":400,"hrec":400,"t":[275,192.5],"cw":200},"altStab":{"w":550,"r":350,"rec":400,"hrec":400,"t":[312.5,218.75],"cw":225}},
+  "Bardiche": {"strike":{"w":625,"r":500,"rec":600,"hrec":400,"t":[245,171.5],"cw":175},"stab":{"w":625,"r":350,"rec":600,"hrec":400,"t":[275,192.5],"cw":250},"altStrike":{"w":675,"r":475,"rec":700,"hrec":400,"t":[245,171.5],"nc":true},"altStab":{"w":650,"r":325,"rec":700,"hrec":400,"t":[250,175],"nc":true}},
+  "Bastard Sword": {"strike":{"w":525,"r":475,"rec":700,"hrec":400,"t":[287.5,201.25],"cw":150},"stab":{"w":575,"r":325,"rec":700,"hrec":400,"t":[325,227.5],"cw":225},"altStrike":{"w":525,"r":500,"rec":400,"hrec":400,"t":[287.5,201.25],"cw":150},"altStab":{"w":575,"r":350,"rec":400,"hrec":400,"t":[325,227.5],"cw":225}},
+  "Spear": {"strike":{"w":625,"r":475,"rec":800,"hrec":400,"t":[237.5,166.25],"nc":true},"stab":{"w":650,"r":325,"rec":700,"hrec":400,"t":[240,168],"nc":true},"altStrike":{"w":575,"r":450,"rec":700,"hrec":400,"t":[270,189],"cw":100},"altStab":{"w":575,"r":325,"rec":700,"hrec":400,"t":[270,189],"cw":200}},
+  "Eveningstar": {"strike":{"w":675,"r":500,"rec":700,"hrec":400,"t":[237.5,166.25],"cw":175},"stab":{"w":625,"r":325,"rec":700,"hrec":400,"t":[270,189],"cw":275},"altStrike":{"w":650,"r":450,"rec":600,"hrec":400,"t":[262.5,183.75],"cw":175},"altStab":{"w":675,"r":300,"rec":600,"hrec":400,"t":[275,192.5],"cw":275}},
+  "Halberd": {"strike":{"w":625,"r":500,"rec":700,"hrec":400,"t":[245,171.5],"cw":125},"stab":{"w":675,"r":325,"rec":700,"hrec":400,"t":[262.5,183.75],"cw":175},"altStrike":{"w":675,"r":500,"rec":800,"hrec":400,"t":[237.5,166.25],"nc":true},"altStab":{"w":700,"r":325,"rec":800,"hrec":400,"t":[237.5,166.25],"nc":true}},
+  "Executioner's": {"strike":{"w":650,"r":500,"rec":800,"hrec":400,"t":[240,168],"nc":true},"stab":{"w":625,"r":350,"rec":800,"hrec":400,"t":[262.5,183.75],"nc":true}},
+  "Maul": {"strike":{"w":725,"r":475,"rec":700,"hrec":400,"t":[255,178.5],"nc":true},"stab":{"w":650,"r":325,"rec":700,"hrec":400,"t":[262.5,183.75],"nc":true}},
+  "Zweihander": {"strike":{"w":650,"r":525,"rec":700,"hrec":400,"t":[240,168],"cw":150},"stab":{"w":725,"r":325,"rec":700,"hrec":400,"t":[262.5,183.75],"cw":225},"altStrike":{"w":600,"r":500,"rec":550,"hrec":400,"t":[262.5,183.75],"cw":175},"altStab":{"w":625,"r":350,"rec":400,"hrec":400,"t":[300,210],"cw":125}},
+  "Estoc": {"strike":{"w":525,"r":500,"rec":600,"hrec":400,"t":[275,192.5],"cw":175},"stab":{"w":565,"r":360,"rec":600,"hrec":400,"t":[270,189],"cw":175},"altStrike":{"w":600,"r":500,"rec":400,"hrec":400,"t":[262.5,183.75],"cw":225},"altStab":{"w":575,"r":325,"rec":400,"hrec":400,"t":[300,210],"cw":225}},
+  "Shortsword": {"strike":{"w":475,"r":450,"rec":400,"hrec":400,"t":[325,227.5],"cw":200},"stab":{"w":475,"r":350,"rec":400,"hrec":400,"t":[325,227.5],"cw":225}},
+  "Warhammer": {"strike":{"w":500,"r":475,"rec":400,"hrec":400,"t":[287.5,201.25],"cw":225},"stab":{"w":500,"r":350,"rec":400,"hrec":400,"t":[312.5,218.75],"cw":275},"altStrike":{"w":500,"r":475,"rec":400,"hrec":400,"t":[287.5,201.25],"nc":true},"altStab":{"w":500,"r":350,"rec":400,"hrec":400,"t":[312.5,218.75],"nc":true}},
+  "Cleaver": {"strike":{"w":475,"r":450,"rec":400,"hrec":400,"t":[300,210],"cw":200},"stab":{"w":525,"r":350,"rec":400,"hrec":400,"t":[300,210],"cw":225}},
+  "Mace": {"strike":{"w":600,"r":475,"rec":600,"hrec":400,"t":[275,192.5],"cw":200},"stab":{"w":550,"r":350,"rec":600,"hrec":400,"t":[300,210],"cw":250}},
+  "Dagger": {"strike":{"w":400,"r":425,"rec":400,"hrec":400,"t":[325,227.5],"cw":225},"stab":{"w":400,"r":350,"rec":400,"hrec":400,"t":[325,227.5],"cw":200}}
 };
 
 // ── Promod (ProClasses) ──
@@ -217,8 +223,9 @@ var VANILLA_TIMINGS = {
 // "promod base + Season 6 tuning", generated 2026-09-26) on 2026-09-27 by
 // _work/gen-promod.mjs — re-run that script on a fresh page save to refresh.
 // Same shapes/encodings as the classmod data; timings additionally carry
-// rec (miss recovery, ms), feint, stam and missStam, which the site does
-// not render yet. Damage capped at 100 for display.
+// feint, stam and missStam, which the site does not render. hrec (flat 400 —
+// same baseline as vanilla) is not in the ProClasses page; it is hand-added
+// by _work/add-hit-recovery.mjs. Damage capped at 100 for display.
 
 var PROMOD = {
   "Greatsword": {"strike":{"head":[50,60,80],"body":[38,43,65],"legs":[34,34,55]},"stab":{"head":[45,65,75],"body":[35,50,60],"legs":[35,35,50]},"alt":{"strike":{"head":[45,49,65],"body":[30,34,50],"legs":[27,31,40]},"stab":{"head":[45,66,75],"body":[40,51,60],"legs":[35,46,50]}}},
@@ -239,19 +246,19 @@ var PROMOD = {
 };
 
 var PROMOD_TIMINGS = {
-  "Greatsword": {"strike":{"w":575,"r":525,"rec":1000,"feint":350,"stam":19,"missStam":13,"t":[257,180],"cw":200},"stab":{"w":675,"r":325,"rec":1000,"feint":300,"stam":19,"missStam":13,"t":[284,198],"cw":250},"altStrike":{"w":575,"r":500,"rec":850,"feint":375,"stam":18,"missStam":12,"t":[262.5,183.75],"cw":200},"altStab":{"w":600,"r":350,"rec":700,"feint":350,"stam":18,"missStam":12,"t":[300,210],"cw":150}},
-  "Longsword": {"strike":{"w":560,"r":525,"rec":850,"feint":400,"stam":19,"missStam":11,"t":[266,187],"cw":150},"stab":{"w":615,"r":350,"rec":850,"feint":350,"stam":18,"missStam":11,"t":[299,209],"cw":200},"altStrike":{"w":540,"r":500,"rec":700,"feint":375,"stam":19,"missStam":11,"t":[275,192.5],"cw":200},"altStab":{"w":550,"r":350,"rec":700,"feint":400,"stam":17,"missStam":10,"t":[312.5,218.75],"cw":225}},
-  "Bardiche": {"strike":{"w":625,"r":500,"rec":900,"feint":325,"stam":19,"missStam":13,"t":[257,180],"cw":175},"stab":{"w":625,"r":350,"rec":900,"feint":375,"stam":18,"missStam":12,"t":[289,202],"cw":250},"altStrike":{"w":675,"r":475,"rec":1000,"feint":275,"stam":20,"missStam":18,"t":[257,180],"nc":true},"altStab":{"w":650,"r":325,"rec":1000,"feint":325,"stam":19,"missStam":16,"t":[263,184],"nc":true}},
-  "Bastard Sword": {"strike":{"w":525,"r":500,"rec":1000,"feint":400,"stam":17,"missStam":10,"t":[287.5,201.25],"cw":150},"stab":{"w":575,"r":325,"rec":1000,"feint":400,"stam":17,"missStam":10,"t":[325,227.5],"cw":225},"altStrike":{"w":525,"r":500,"rec":700,"feint":400,"stam":18,"missStam":10,"t":[287.5,201.25],"cw":150},"altStab":{"w":575,"r":350,"rec":700,"feint":400,"stam":18,"missStam":10,"t":[325,227.5],"cw":225}},
-  "Spear": {"strike":{"w":625,"r":475,"rec":1100,"feint":325,"stam":18,"missStam":16,"t":[249,175],"nc":true},"stab":{"w":675,"r":350,"rec":1000,"feint":300,"stam":20,"missStam":16,"t":[252,176],"nc":true},"altStrike":{"w":575,"r":450,"rec":1000,"feint":375,"stam":17,"missStam":11,"t":[284,198],"cw":100},"altStab":{"w":575,"r":350,"rec":1000,"feint":375,"stam":19,"missStam":14,"t":[284,198],"cw":200}},
-  "Eveningstar": {"strike":{"w":675,"r":500,"rec":1000,"feint":400,"stam":21,"missStam":17,"t":[245,171],"nc":true},"stab":{"w":625,"r":325,"rec":1000,"feint":325,"stam":17,"missStam":16,"t":[278,195],"nc":true},"altStrike":{"w":650,"r":450,"rec":900,"feint":300,"stam":20,"missStam":12,"t":[262.5,183.75],"cw":175},"altStab":{"w":675,"r":300,"rec":900,"feint":275,"stam":21,"missStam":18,"t":[275,192.5],"cw":275}},
-  "Halberd": {"strike":{"w":625,"r":500,"rec":1000,"feint":325,"stam":20,"missStam":16,"t":[257,180],"cw":125},"stab":{"w":675,"r":325,"rec":1000,"feint":300,"stam":19,"missStam":16,"t":[276,193],"cw":175},"altStrike":{"w":675,"r":500,"rec":1100,"feint":275,"stam":21,"missStam":19,"t":[245,171.5],"nc":true},"altStab":{"w":700,"r":325,"rec":1100,"feint":300,"stam":20,"missStam":16,"t":[249,175],"nc":true}},
-  "Executioner's": {"strike":{"w":650,"r":500,"rec":1100,"feint":300,"stam":20,"missStam":15,"t":[247,173],"nc":true},"stab":{"w":625,"r":350,"rec":1100,"feint":325,"stam":17,"missStam":9,"t":[270,189],"nc":true}},
-  "Maul": {"strike":{"w":725,"r":475,"rec":1000,"feint":225,"stam":24,"missStam":16,"t":[268,187],"nc":true},"stab":{"w":650,"r":325,"rec":1000,"feint":300,"stam":19,"missStam":11,"t":[263,184],"nc":true}},
-  "Zweihander": {"strike":{"w":650,"r":535,"rec":1000,"feint":300,"stam":20,"missStam":16,"t":[252,176],"cw":150},"stab":{"w":725,"r":325,"rec":1000,"feint":300,"stam":19,"missStam":15,"t":[276,193],"cw":225},"altStrike":{"w":600,"r":500,"rec":850,"feint":350,"stam":18,"missStam":14,"t":[262.5,183.75],"cw":175},"altStab":{"w":625,"r":350,"rec":700,"feint":325,"stam":19,"missStam":13,"t":[300,210],"cw":125}},
-  "Estoc": {"strike":{"w":525,"r":500,"rec":900,"feint":400,"stam":16,"missStam":8,"t":[289,202],"cw":200},"stab":{"w":625,"r":350,"rec":900,"feint":325,"stam":18,"missStam":11,"t":[284,198],"cw":200},"altStrike":{"w":600,"r":500,"rec":700,"feint":350,"stam":18,"missStam":11,"t":[262.5,183.75],"cw":250},"altStab":{"w":575,"r":325,"rec":700,"feint":375,"stam":17,"missStam":10,"t":[300,210],"cw":250}},
-  "Poleaxe": {"strike":{"w":550,"r":500,"rec":900,"feint":350,"stam":18,"missStam":12,"t":[263,184],"cw":200},"stab":{"w":650,"r":325,"rec":900,"feint":325,"stam":18,"missStam":12,"t":[315,220],"cw":250},"altStrike":{"w":600,"r":500,"rec":1000,"feint":325,"stam":19,"missStam":12,"t":[252,176],"cw":225},"altStab":{"w":650,"r":325,"rec":900,"feint":325,"stam":18,"missStam":9,"t":[305,213],"cw":250}},
-  "Messer": {"strike":{"w":525,"r":525,"rec":850,"feint":375,"stam":20,"missStam":13,"t":[263,184],"cw":150},"stab":{"w":625,"r":350,"rec":850,"feint":375,"stam":17,"missStam":12,"t":[289,202],"cw":225},"altStrike":{"w":540,"r":525,"rec":1000,"feint":375,"stam":19,"missStam":13,"t":[250,175],"cw":175},"altStab":{"w":625,"r":325,"rec":1000,"feint":375,"stam":17,"missStam":12,"t":[275,192.5],"cw":225}},
-  "Mace": {"strike":{"w":600,"r":475,"rec":900,"feint":325,"stam":19,"missStam":13,"t":[275,192.5],"cw":200},"stab":{"w":550,"r":350,"rec":900,"feint":400,"stam":17,"missStam":7,"t":[300,210],"cw":250}},
-  "Warhammer": {"strike":{"w":500,"r":475,"rec":700,"feint":400,"stam":19,"missStam":10,"t":[287.5,201.25],"cw":225},"stab":{"w":500,"r":350,"rec":700,"feint":400,"stam":18,"missStam":9,"t":[312.5,218.75],"cw":275},"altStrike":{"w":500,"r":475,"rec":700,"feint":400,"stam":19,"missStam":10,"t":[287.5,201.25],"nc":true},"altStab":{"w":500,"r":350,"rec":700,"feint":400,"stam":18,"missStam":9,"t":[312.5,218.75],"nc":true}}
+  "Greatsword": {"strike":{"w":575,"r":525,"rec":1000,"hrec":400,"feint":350,"stam":19,"missStam":13,"t":[257,180],"cw":200},"stab":{"w":675,"r":325,"rec":1000,"hrec":400,"feint":300,"stam":19,"missStam":13,"t":[284,198],"cw":250},"altStrike":{"w":575,"r":500,"rec":850,"hrec":400,"feint":375,"stam":18,"missStam":12,"t":[262.5,183.75],"cw":200},"altStab":{"w":600,"r":350,"rec":700,"hrec":400,"feint":350,"stam":18,"missStam":12,"t":[300,210],"cw":150}},
+  "Longsword": {"strike":{"w":560,"r":525,"rec":850,"hrec":400,"feint":400,"stam":19,"missStam":11,"t":[266,187],"cw":150},"stab":{"w":615,"r":350,"rec":850,"hrec":400,"feint":350,"stam":18,"missStam":11,"t":[299,209],"cw":200},"altStrike":{"w":540,"r":500,"rec":700,"hrec":400,"feint":375,"stam":19,"missStam":11,"t":[275,192.5],"cw":200},"altStab":{"w":550,"r":350,"rec":700,"hrec":400,"feint":400,"stam":17,"missStam":10,"t":[312.5,218.75],"cw":225}},
+  "Bardiche": {"strike":{"w":625,"r":500,"rec":900,"hrec":400,"feint":325,"stam":19,"missStam":13,"t":[257,180],"cw":175},"stab":{"w":625,"r":350,"rec":900,"hrec":400,"feint":375,"stam":18,"missStam":12,"t":[289,202],"cw":250},"altStrike":{"w":675,"r":475,"rec":1000,"hrec":400,"feint":275,"stam":20,"missStam":18,"t":[257,180],"nc":true},"altStab":{"w":650,"r":325,"rec":1000,"hrec":400,"feint":325,"stam":19,"missStam":16,"t":[263,184],"nc":true}},
+  "Bastard Sword": {"strike":{"w":525,"r":500,"rec":1000,"hrec":400,"feint":400,"stam":17,"missStam":10,"t":[287.5,201.25],"cw":150},"stab":{"w":575,"r":325,"rec":1000,"hrec":400,"feint":400,"stam":17,"missStam":10,"t":[325,227.5],"cw":225},"altStrike":{"w":525,"r":500,"rec":700,"hrec":400,"feint":400,"stam":18,"missStam":10,"t":[287.5,201.25],"cw":150},"altStab":{"w":575,"r":350,"rec":700,"hrec":400,"feint":400,"stam":18,"missStam":10,"t":[325,227.5],"cw":225}},
+  "Spear": {"strike":{"w":625,"r":475,"rec":1100,"hrec":400,"feint":325,"stam":18,"missStam":16,"t":[249,175],"nc":true},"stab":{"w":675,"r":350,"rec":1000,"hrec":400,"feint":300,"stam":20,"missStam":16,"t":[252,176],"nc":true},"altStrike":{"w":575,"r":450,"rec":1000,"hrec":400,"feint":375,"stam":17,"missStam":11,"t":[284,198],"cw":100},"altStab":{"w":575,"r":350,"rec":1000,"hrec":400,"feint":375,"stam":19,"missStam":14,"t":[284,198],"cw":200}},
+  "Eveningstar": {"strike":{"w":675,"r":500,"rec":1000,"hrec":400,"feint":400,"stam":21,"missStam":17,"t":[245,171],"nc":true},"stab":{"w":625,"r":325,"rec":1000,"hrec":400,"feint":325,"stam":17,"missStam":16,"t":[278,195],"nc":true},"altStrike":{"w":650,"r":450,"rec":900,"hrec":400,"feint":300,"stam":20,"missStam":12,"t":[262.5,183.75],"cw":175},"altStab":{"w":675,"r":300,"rec":900,"hrec":400,"feint":275,"stam":21,"missStam":18,"t":[275,192.5],"cw":275}},
+  "Halberd": {"strike":{"w":625,"r":500,"rec":1000,"hrec":400,"feint":325,"stam":20,"missStam":16,"t":[257,180],"cw":125},"stab":{"w":675,"r":325,"rec":1000,"hrec":400,"feint":300,"stam":19,"missStam":16,"t":[276,193],"cw":175},"altStrike":{"w":675,"r":500,"rec":1100,"hrec":400,"feint":275,"stam":21,"missStam":19,"t":[245,171.5],"nc":true},"altStab":{"w":700,"r":325,"rec":1100,"hrec":400,"feint":300,"stam":20,"missStam":16,"t":[249,175],"nc":true}},
+  "Executioner's": {"strike":{"w":650,"r":500,"rec":1100,"hrec":400,"feint":300,"stam":20,"missStam":15,"t":[247,173],"nc":true},"stab":{"w":625,"r":350,"rec":1100,"hrec":400,"feint":325,"stam":17,"missStam":9,"t":[270,189],"nc":true}},
+  "Maul": {"strike":{"w":725,"r":475,"rec":1000,"hrec":400,"feint":225,"stam":24,"missStam":16,"t":[268,187],"nc":true},"stab":{"w":650,"r":325,"rec":1000,"hrec":400,"feint":300,"stam":19,"missStam":11,"t":[263,184],"nc":true}},
+  "Zweihander": {"strike":{"w":650,"r":535,"rec":1000,"hrec":400,"feint":300,"stam":20,"missStam":16,"t":[252,176],"cw":150},"stab":{"w":725,"r":325,"rec":1000,"hrec":400,"feint":300,"stam":19,"missStam":15,"t":[276,193],"cw":225},"altStrike":{"w":600,"r":500,"rec":850,"hrec":400,"feint":350,"stam":18,"missStam":14,"t":[262.5,183.75],"cw":175},"altStab":{"w":625,"r":350,"rec":700,"hrec":400,"feint":325,"stam":19,"missStam":13,"t":[300,210],"cw":125}},
+  "Estoc": {"strike":{"w":525,"r":500,"rec":900,"hrec":400,"feint":400,"stam":16,"missStam":8,"t":[289,202],"cw":200},"stab":{"w":625,"r":350,"rec":900,"hrec":400,"feint":325,"stam":18,"missStam":11,"t":[284,198],"cw":200},"altStrike":{"w":600,"r":500,"rec":700,"hrec":400,"feint":350,"stam":18,"missStam":11,"t":[262.5,183.75],"cw":250},"altStab":{"w":575,"r":325,"rec":700,"hrec":400,"feint":375,"stam":17,"missStam":10,"t":[300,210],"cw":250}},
+  "Poleaxe": {"strike":{"w":550,"r":500,"rec":900,"hrec":400,"feint":350,"stam":18,"missStam":12,"t":[263,184],"cw":200},"stab":{"w":650,"r":325,"rec":900,"hrec":400,"feint":325,"stam":18,"missStam":12,"t":[315,220],"cw":250},"altStrike":{"w":600,"r":500,"rec":1000,"hrec":400,"feint":325,"stam":19,"missStam":12,"t":[252,176],"cw":225},"altStab":{"w":650,"r":325,"rec":900,"hrec":400,"feint":325,"stam":18,"missStam":9,"t":[305,213],"cw":250}},
+  "Messer": {"strike":{"w":525,"r":525,"rec":850,"hrec":400,"feint":375,"stam":20,"missStam":13,"t":[263,184],"cw":150},"stab":{"w":625,"r":350,"rec":850,"hrec":400,"feint":375,"stam":17,"missStam":12,"t":[289,202],"cw":225},"altStrike":{"w":540,"r":525,"rec":1000,"hrec":400,"feint":375,"stam":19,"missStam":13,"t":[250,175],"cw":175},"altStab":{"w":625,"r":325,"rec":1000,"hrec":400,"feint":375,"stam":17,"missStam":12,"t":[275,192.5],"cw":225}},
+  "Mace": {"strike":{"w":600,"r":475,"rec":900,"hrec":400,"feint":325,"stam":19,"missStam":13,"t":[275,192.5],"cw":200},"stab":{"w":550,"r":350,"rec":900,"hrec":400,"feint":400,"stam":17,"missStam":7,"t":[300,210],"cw":250}},
+  "Warhammer": {"strike":{"w":500,"r":475,"rec":700,"hrec":400,"feint":400,"stam":19,"missStam":10,"t":[287.5,201.25],"cw":225},"stab":{"w":500,"r":350,"rec":700,"hrec":400,"feint":400,"stam":18,"missStam":9,"t":[312.5,218.75],"cw":275},"altStrike":{"w":500,"r":475,"rec":700,"hrec":400,"feint":400,"stam":19,"missStam":10,"t":[287.5,201.25],"nc":true},"altStab":{"w":500,"r":350,"rec":700,"hrec":400,"feint":400,"stam":18,"missStam":9,"t":[312.5,218.75],"nc":true}}
 };

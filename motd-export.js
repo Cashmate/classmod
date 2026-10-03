@@ -8,6 +8,14 @@
   const intro = quickstart.firstElementChild;
   const instructions = quickstart.children[1];
   intro.classList.add('motd-intro');
+  const introHeading = document.createElement('header');
+  introHeading.className = 'motd-title-row';
+  introHeading.appendChild(intro.querySelector('h1'));
+  const reopenHint = document.createElement('span');
+  reopenHint.className = 'motd-reopen';
+  reopenHint.innerHTML = 'Press <kbd>K</kbd> to reopen';
+  introHeading.appendChild(reopenHint);
+  intro.prepend(introHeading);
   instructions.classList.add('motd-instructions');
   const alert = instructions.lastElementChild;
   alert.classList.add('motd-alert');
@@ -31,10 +39,11 @@
   const cards = document.getElementById('cards');
   const entries = Array.from(cards.querySelectorAll('.wcard'));
   cards.replaceChildren();
-  const base = Math.floor(entries.length / 3);
-  const remainder = entries.length % 3;
+  const columnCount = 2;
+  const base = Math.floor(entries.length / columnCount);
+  const remainder = entries.length % columnCount;
   let offset = 0;
-  for (let column = 0; column < 3; column++) {
+  for (let column = 0; column < columnCount; column++) {
     const group = document.createElement('div');
     group.className = 'flex flex-col gap-3';
     const length = base + (column < remainder ? 1 : 0);
@@ -50,7 +59,7 @@
     '<a href="' + location.pathname + '">Back to guide</a>' +
     '<span role="status" id="motd-progress">' + entries.length + ' classes from the current guide.</span>' +
     '<p>' + (hasLocalIcons ? 'Choose the img folder inside classmod first. The browser calls this “Upload”; the icons are read locally and are not sent to a server. ' : '') +
-    'The dark preview background is excluded from the PNG. Export is 2× resolution.</p>';
+    'The dark preview background is excluded from the PNG. Two columns with larger text for in-game readability. Export is 2× resolution.</p>';
   document.body.insertBefore(tools, target);
   const button = document.getElementById('motd-save');
   const progress = document.getElementById('motd-progress');
