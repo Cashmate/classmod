@@ -365,7 +365,7 @@
       <div class="animate-fade-up">
         <span class="inline-flex flex-wrap items-center gap-2 rounded-full border border-indigo-400/25 bg-indigo-500/10 px-3 py-1 text-[0.7rem] font-bold tracking-wide text-indigo-300">
           <i data-lucide="sparkles" class="h-3 w-3"></i>
-          <a href="#patch-v0.5" data-tip="Open patch notes" class="transition-colors duration-300 hover:text-indigo-100 hover:underline underline-offset-2">v0.5</a>
+          <a href="#patch-v0.6" data-tip="Open patch notes" class="transition-colors duration-300 hover:text-indigo-100 hover:underline underline-offset-2">v0.6</a>
           <span aria-hidden="true">·</span>
           <span>Beta</span>
           <span id="newlyUpdated" class="inline-flex items-center gap-2">
@@ -494,7 +494,7 @@
         <summary class="flex cursor-pointer list-none items-center justify-between gap-4 p-5 transition-colors duration-300 hover:bg-white/[0.03] [&::-webkit-details-marker]:hidden">
           <div class="flex items-center gap-3">
             <span class="grid h-9 w-9 flex-none place-items-center rounded-xl border border-indigo-400/30 bg-indigo-500/15"><i data-lucide="scroll-text" class="h-4 w-4 text-indigo-300"></i></span>
-            <h2 class="text-lg font-extrabold tracking-tight text-white">Patch Notes <span class="font-bold text-slate-500">· v0.5</span></h2>
+            <h2 class="text-lg font-extrabold tracking-tight text-white">Patch Notes <span class="font-bold text-slate-500">· v0.6</span></h2>
           </div>
           <div class="flex items-center gap-3">
             <span class="hidden text-xs font-medium italic text-slate-500 sm:inline">Click to expand</span>
@@ -502,11 +502,62 @@
           </div>
         </summary>
         <div class="patchnotes space-y-3 border-t border-white/5 px-5 pb-5 pt-4">
-          <details id="patch-v0.5" data-date="2026-09-27" class="rounded-xl border border-white/10 bg-white/[0.03] transition-all duration-300 open:border-indigo-400/25">
+          <details id="patch-v0.6" data-date="2026-11-09" class="rounded-xl border border-white/10 bg-white/[0.03] transition-all duration-300 open:border-indigo-400/25">
+            <summary class="flex cursor-pointer list-none flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3 transition-colors duration-300 hover:bg-white/[0.03] [&::-webkit-details-marker]:hidden">
+              <span class="flex flex-wrap items-center gap-2">
+                <span class="rounded-md border border-indigo-400/30 bg-indigo-500/15 px-2 py-0.5 font-mono text-[0.72rem] font-bold text-indigo-300">v0.6</span>
+                <span class="rounded-full border border-emerald-400/30 bg-emerald-500/10 px-2 py-0.5 text-[0.62rem] font-bold text-emerald-300">Latest</span>
+                <span class="text-xs font-semibold text-slate-500">weapon timing, damage parity &amp; fixes</span>
+              </span>
+              <span class="flex items-center gap-3">
+                <span class="text-xs font-semibold text-slate-500">Nov 9, 2026</span>
+                <i data-lucide="chevron-down" class="chev-rotate h-4 w-4 text-slate-400"></i>
+              </span>
+            </summary>
+            <div class="grid gap-3 border-t border-white/5 p-4 lg:grid-cols-2">
+              <section class="rounded-xl border border-white/5 bg-white/[0.02] p-4">
+                <h3 class="flex items-center justify-between gap-2">
+                  <span class="flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-indigo-300"><i data-lucide="sword" class="h-3.5 w-3.5"></i> Weapons</span>
+                  <span class="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[0.62rem] font-bold text-slate-500">6 changes</span>
+                </h3>
+                <ul class="mt-3 space-y-2 text-sm leading-relaxed text-slate-400">
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span><strong class="font-bold text-slate-200">Messer:</strong> Strike release <code>500 → 515ms</code> <span class="buff">BUFF</span> | Strike combo windup <code>135 → 160ms</code> <span class="nerf">NERF</span> | Movespeed lowered to <code>+2%</code> (was <code>+5%</code>) <span class="nerf">NERF</span></span></li>
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span><strong class="font-bold text-slate-200">Bardiche:</strong> Strike windup <code>600 → 585ms</code> <span class="buff">BUFF</span> | Strike release <code>500 → 515ms</code> <span class="buff">BUFF</span></span></li>
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span><strong class="font-bold text-slate-200">Spear:</strong> Alt-mode damage nerfed (now the same as normal mode) <span class="nerf">NERF</span></span></li>
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span><strong class="font-bold text-slate-200">Eveningstar:</strong> Armor buffed — now wears T3 head <span class="buff">BUFF</span> | <code>+2%</code> movespeed <span class="buff">BUFF</span></span></li>
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span><strong class="font-bold text-slate-200">Halberd:</strong> Normal-mode damage nerfed (now the same as alt mode) <span class="nerf">NERF</span></span></li>
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span><strong class="font-bold text-slate-200">Dagger:</strong> No longer able to combo after a missed attack | Miss recovery on strike and stab raised to <code>1000ms</code> (was <code>400ms</code>) <span class="nerf">NERF</span></span></li>
+                </ul>
+              </section>
+              <section class="rounded-xl border border-white/5 bg-white/[0.02] p-4">
+                <h3 class="flex items-center justify-between gap-2">
+                  <span class="flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-indigo-300"><i data-lucide="sparkles" class="h-3.5 w-3.5"></i> Features</span>
+                  <span class="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[0.62rem] font-bold text-slate-500">2 changes</span>
+                </h3>
+                <ul class="mt-3 space-y-2 text-sm leading-relaxed text-slate-400">
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span><strong class="font-bold text-slate-200">Strike morphs:</strong> minimum morph time added — <code>MinTimeStrikeStabMorphs=(X=0.25, Y=0.2, Z=0.25)</code></span></li>
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span><strong class="font-bold text-slate-200">Camera shake:</strong> re-enabled as a slight bump when your parry connects</span></li>
+                </ul>
+              </section>
+              <section class="rounded-xl border border-white/5 bg-white/[0.02] p-4 lg:col-span-2">
+                <h3 class="flex items-center justify-between gap-2">
+                  <span class="flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-indigo-300"><i data-lucide="bug" class="h-3.5 w-3.5"></i> Bug Fixes</span>
+                  <span class="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[0.62rem] font-bold text-slate-500">4 fixes</span>
+                </h3>
+                <ul class="mt-3 space-y-2 text-sm leading-relaxed text-slate-400">
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span><strong class="font-bold text-slate-200">Universal leg damage:</strong> fixed for Poleaxe, Messer, Shortsword, Warhammer, Cleaver and Dagger — leg hits now deal torso damage <span class="buff">BUFF</span></span></li>
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span><strong class="font-bold text-slate-200">Killfeed:</strong> fixed invisible killfeed entries</span></li>
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span><strong class="font-bold text-slate-200">Health regen:</strong> fixed the visual desync</span></li>
+                  <li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 flex-none rounded-full bg-indigo-400/70"></span><span><strong class="font-bold text-slate-200">Movespeed desync:</strong> fixed, so other players' movement may appear slightly smoother</span></li>
+                </ul>
+              </section>
+            </div>
+          </details>
+
+          <details id="patch-v0.5" data-date="2026-09-27" class="rounded-xl border border-white/10 bg-white/[0.03] transition-all duration-300 hover:border-white/20">
             <summary class="flex cursor-pointer list-none flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3 transition-colors duration-300 hover:bg-white/[0.03] [&::-webkit-details-marker]:hidden">
               <span class="flex flex-wrap items-center gap-2">
                 <span class="rounded-md border border-indigo-400/30 bg-indigo-500/15 px-2 py-0.5 font-mono text-[0.72rem] font-bold text-indigo-300">v0.5</span>
-                <span class="rounded-full border border-emerald-400/30 bg-emerald-500/10 px-2 py-0.5 text-[0.62rem] font-bold text-emerald-300">Latest</span>
                 <span class="text-xs font-semibold text-slate-500">messer, weapon timing &amp; turncap pass</span>
               </span>
               <span class="flex items-center gap-3">
@@ -797,8 +848,8 @@
         <span class="text-sm font-bold tracking-wide text-white">CLASSMOD</span>
       </a>
       <!-- Site version tracks this webpage only (the mod version in the text below tracks the in-game mod, see Patch Notes).
-           Site history: v0.1 pre-overhaul site · v0.2.0 UI overhaul · v1.0 alt-mode toggle + BP-verified damage tables · v1.1 classmod/vanilla/promod stat-source toggle + per-card compare mode (primary vs secondary, legs rows for vanilla/promod), promod values from ProClasses, classmod recovery values added, stats moved to weapon-data.js · v1.2 Poleaxe class added (BP-verified roster via /verify-classes) · v1.3 secondary-weapon stat panels (expandable bar under the primary stats, sharing the source/compare/mode toggles; Mace & Warhammer BP-verified via CDO export, Shortsword/Cleaver/Dagger classmod = vanilla) · v1.4 patch notes for mod v0.4 (Poleaxe class, movement rework, jump/stamina/perk tweaks, server fixes) · v1.5 Nimble tag on the five faster classes + the Mace secondary (v0.4 movement rework) · v1.6 Nimble pill on the Mace secondary panel bar · v1.7 Nimble pill moved up next to the weapon name · v1.8 v0.4 patch notes list the ten added skirmish maps · v1.9 v0.5 patch notes (Messer, weapon timing &amp; turncap pass) · v1.10 Messer class added (BP-verified roster via CDO export) · v1.11 speed tag now shows the percentage (+5%, was the "Nimble" label) — Bastard Sword loses the boost, Messer gains it + v0.5 patch notes entry · v1.12 hit-recovery value (HREC) added to every timing row — flat 400 everywhere, lowered per the v0.5 patch notes for Maul/Executioner's/Zweihander/Spear/Halberd/Bardiche · v1.13 v0.5 patch notes add the lunge behavior (adjusted) and chase mechanic (fixed) entries · v1.14 lunge behavior moved to Bug Fixes, plus a new Bug Fixes entry: movement much less buggy overall, weapon swap no longer increases speed during the swap animation · v1.15 chase mechanic moved to Bug Fixes, lunge behavior stays under Features · v1.16 v0.5 "New: Added Messer" entry now reads "as a playable class" (matches v0.4 wording) · v1.17 (current) promod tables refreshed from the ProClasses page regeneration of 2026-11-02 — all 15 weapons: feint lock +25 ms, T2 leg damage raised, windup retunes (feint stays stored-but-unrendered) -->
-      <p class="text-center text-xs font-medium text-slate-500">Cashmate's Classmod · mod v0.5 · site v1.17 · More classes to come</p>
+           Site history: v0.1 pre-overhaul site · v0.2.0 UI overhaul · v1.0 alt-mode toggle + BP-verified damage tables · v1.1 classmod/vanilla/promod stat-source toggle + per-card compare mode (primary vs secondary, legs rows for vanilla/promod), promod values from ProClasses, classmod recovery values added, stats moved to weapon-data.js · v1.2 Poleaxe class added (BP-verified roster via /verify-classes) · v1.3 secondary-weapon stat panels (expandable bar under the primary stats, sharing the source/compare/mode toggles; Mace & Warhammer BP-verified via CDO export, Shortsword/Cleaver/Dagger classmod = vanilla) · v1.4 patch notes for mod v0.4 (Poleaxe class, movement rework, jump/stamina/perk tweaks, server fixes) · v1.5 Nimble tag on the five faster classes + the Mace secondary (v0.4 movement rework) · v1.6 Nimble pill on the Mace secondary panel bar · v1.7 Nimble pill moved up next to the weapon name · v1.8 v0.4 patch notes list the ten added skirmish maps · v1.9 v0.5 patch notes (Messer, weapon timing &amp; turncap pass) · v1.10 Messer class added (BP-verified roster via CDO export) · v1.11 speed tag now shows the percentage (+5%, was the "Nimble" label) — Bastard Sword loses the boost, Messer gains it + v0.5 patch notes entry · v1.12 hit-recovery value (HREC) added to every timing row — flat 400 everywhere, lowered per the v0.5 patch notes for Maul/Executioner's/Zweihander/Spear/Halberd/Bardiche · v1.13 v0.5 patch notes add the lunge behavior (adjusted) and chase mechanic (fixed) entries · v1.14 lunge behavior moved to Bug Fixes, plus a new Bug Fixes entry: movement much less buggy overall, weapon swap no longer increases speed during the swap animation · v1.15 chase mechanic moved to Bug Fixes, lunge behavior stays under Features · v1.16 v0.5 "New: Added Messer" entry now reads "as a playable class" (matches v0.4 wording) · v1.17 promod tables refreshed from the ProClasses page regeneration of 2026-11-02 — all 15 weapons: feint lock +25 ms, T2 leg damage raised, windup retunes (feint stays stored-but-unrendered) · v1.18 v0.6 patch notes (Bardiche/Messer timing, universal leg damage, Spear/Halberd mode damage parity, strike-morph minimum time, killfeed + regen fixes) · v1.19 (current) speed tags read a per-class percentage (`speed`) — Messer and Eveningstar show +2%, the untouched faster classes keep +5% -->
+      <p class="text-center text-xs font-medium text-slate-500">Cashmate's Classmod · mod v0.6 · site v1.19 · More classes to come</p>
       <div class="flex items-center gap-1.5">
         <a href="https://discord.gg/xaZhEMJnHa" target="_blank" rel="noopener noreferrer" aria-label="Discord"
            class="grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-white/5 text-slate-400 transition-all duration-300 hover:-translate-y-0.5 hover:border-indigo-400/40 hover:text-indigo-300">
@@ -890,12 +941,12 @@
     // Auto-open collapsible sections ("Why", patch notes) when navigated to
     // from the nav, when the page loads with their hash, or on hash changes.
     // Deep-linking a specific version (#patch-v0.2.2) expands only that one;
-    // a plain load or #patchnotes expands the latest (v0.5).
+    // a plain load or #patchnotes expands the latest (v0.6).
     function openFromHash() {
       var hash = location.hash.replace("#", "");
       var patchPanel = document.getElementById("patchDetails");
       var versions = document.querySelectorAll("#patchDetails details");
-      var latest = document.getElementById("patch-v0.5");
+      var latest = document.getElementById("patch-v0.6");
 
       if (hash.indexOf("patch-v") === 0) {
         var target = document.getElementById(hash);
@@ -1260,6 +1311,9 @@
     }
 
     var NIMBLE_TIP = "Movespeed increased";
+    // speed: N (percent) on a class; nimble: true stays the +5% shorthand.
+    function speedPct(w) { return w && (w.speed != null ? w.speed : (w.nimble ? 5 : 0)); }
+    function speedTag(w) { var p = speedPct(w); return p ? tag("+" + p + "%", "nimble", NIMBLE_TIP) : ""; }
 
     // "+ Shortsword, Firepot | Second Wind" → [Secondary tags][Perk tags]
     // The Nimble pill does NOT live here — it sits next to the weapon name
@@ -1487,7 +1541,7 @@
       var sec = meleeSecondary(w);
       if (!sec) return "";
       var icon = ICONS[sec.name] ? '<img src="' + ICONS[sec.name] + '" alt="" class="wicon h-9 w-auto object-contain" loading="lazy" />' : "";
-      var nimble = sec.nimble ? tag("+5%", "nimble", NIMBLE_TIP) : "";
+      var nimble = speedTag(sec);
       return '<div class="sec-block mt-3" data-sec-block>' +
         '<button type="button" class="sec-toggle" data-sec-toggle aria-expanded="false">' +
           icon +
@@ -1507,7 +1561,7 @@
 
     function cardHTML(w) {
       var pips = w.armor.map(function (v) { return '<i class="pip p' + v + '">' + v + "</i>"; }).join("");
-      var searchable = [w.name, w.nimble ? "nimble" : "", w.extras || ""].join(" ").toLowerCase();
+      var searchable = [w.name, speedPct(w) ? "nimble" : "", w.extras || ""].join(" ").toLowerCase();
       var icon = ICONS[w.name] ? '<img src="' + ICONS[w.name] + '" alt="" class="wicon h-14 w-9 object-contain" loading="lazy" />' : "";
       var figure = '<span data-tip="Head tier ' + w.armor[0] + ' · Body tier ' + w.armor[1] + ' · Legs tier ' + w.armor[2] + '" class="flex-none">' + armorFigure(w.armor) + '</span>';
       return '<article class="wcard glass lift relative overflow-hidden rounded-2xl border border-white/10 shadow-card hover:border-indigo-400/30 hover:shadow-card-hover" data-name="' + w.name + '" data-search="' + searchable + '" style="--tier:' + tierColor(armorSum(w)) + '">' +
@@ -1516,7 +1570,7 @@
           '<span class="min-w-0">' +
             '<span class="flex flex-wrap items-center gap-x-2 gap-y-0.5">' +
               '<span class="text-sm font-bold text-white">' + w.name + "</span>" +
-              (w.nimble ? tag("+5%", "nimble", NIMBLE_TIP) : "") +
+              speedTag(w) +
             "</span>" +
             extrasTags(w) +
           "</span>" +

@@ -5,8 +5,9 @@
 // ── Classmod (the mod) ──
 // WEAPONS: one class per weapon. Damage arrays are [vs T3, vs T2, vs T1];
 // players have 100 HP. altMode: true → the weapon has a Normal/Alt pair on
-// mordstats.com (Executioner's and Maul have no alt). nimble: true → +5%
-// movespeed (CashTweaks WeaponSpeedModifiers; rendered as the +5% tag).
+// mordstats.com (Executioner's and Maul have no alt). speed: N → +N% movespeed
+// (CashTweaks WeaponSpeedModifiers; rendered as the +N% tag); nimble: true is
+// the legacy +5% shorthand still used by the untouched faster classes.
 // HAND-AUTHORED — the
 // generators below never touch it. HTK flavor tooltips are NOT stored here —
 // they are generated from the tables at render time (htkTip() in index.html),
@@ -44,7 +45,7 @@ var WEAPONS = [
           strike: { head: [60, 61, 63], body: [45, 46, 48] },
           stab:    { head: [45, 65, 83], body: [35, 50, 68] }
         } },
-      { name: "Messer", armor: [3, 3, 3], altMode: true, nimble: true,
+      { name: "Messer", armor: [3, 3, 3], altMode: true, speed: 2,
         strike: { head: [50, 62, 75], body: [40, 52, 60] },
         stab:    { head: [30, 35, 45], body: [20, 25, 35] },
         alt: {
@@ -76,10 +77,10 @@ var WEAPONS = [
         strike: { head: [32, 38, 45], body: [17, 23, 30] },
         stab:    { head: [52, 60, 85], body: [36, 38, 52] },
         alt: {
-          strike: { head: [35, 48, 64], body: [20, 33, 49] },
-          stab:    { head: [45, 67, 77], body: [38, 52, 62] }
+          strike: { head: [32, 38, 45], body: [17, 23, 30] },
+          stab:    { head: [52, 60, 85], body: [36, 38, 52] }
         } },
-      { name: "Eveningstar", armor: [2, 2, 2], altMode: true,
+      { name: "Eveningstar", armor: [3, 2, 2], altMode: true, speed: 2,
         strike: { head: [60, 70, 90], body: [50, 60, 70] },
         stab:    { head: [30, 35, 40], body: [25, 30, 35] },
         alt: {
@@ -88,7 +89,7 @@ var WEAPONS = [
         } },
       { name: "Halberd", armor: [2, 2, 2], altMode: true,
         strike: { head: [60, 70, 100], body: [40, 60, 80] },
-        stab:    { head: [50, 52, 75], body: [35, 45, 60] },
+        stab:    { head: [40, 52, 75], body: [35, 45, 60] },
         alt: {
           strike: { head: [60, 70, 100], body: [40, 60, 80] },
           stab:    { head: [40, 52, 75], body: [35, 45, 60] }
@@ -150,9 +151,9 @@ var SECONDARIES = [
 var WEAPON_TIMINGS = {
   "Greatsword": {"strike":{"w":575,"r":515,"rec":1000,"hrec":400,"t":[257,180],"cw":185},"stab":{"w":675,"r":325,"rec":1000,"hrec":400,"t":[284,198],"cw":250},"altStrike":{"w":575,"r":500,"rec":850,"hrec":400,"t":[262.5,183.75],"cw":200},"altStab":{"w":600,"r":350,"rec":700,"hrec":400,"t":[300,210],"cw":125}},
   "Poleaxe": {"strike":{"w":550,"r":500,"rec":900,"hrec":400,"t":[263,184],"cw":175},"stab":{"w":650,"r":325,"rec":900,"hrec":400,"t":[315,220],"cw":225},"altStrike":{"w":600,"r":500,"rec":1000,"hrec":400,"t":[252,176],"cw":200},"altStab":{"w":650,"r":325,"rec":900,"hrec":400,"t":[305,213],"cw":225}},
-  "Messer": {"strike":{"w":525,"r":500,"rec":850,"hrec":400,"t":[273.5,191.5],"cw":135},"stab":{"w":625,"r":350,"rec":850,"hrec":400,"t":[289,202],"cw":225},"altStrike":{"w":540,"r":500,"rec":1000,"hrec":400,"t":[250,175],"cw":175},"altStab":{"w":625,"r":325,"rec":1000,"hrec":400,"t":[275,192.5],"cw":225}},
+  "Messer": {"strike":{"w":525,"r":515,"rec":850,"hrec":400,"t":[273.5,191.5],"cw":160},"stab":{"w":625,"r":350,"rec":850,"hrec":400,"t":[289,202],"cw":225},"altStrike":{"w":540,"r":500,"rec":1000,"hrec":400,"t":[250,175],"cw":175},"altStab":{"w":625,"r":325,"rec":1000,"hrec":400,"t":[275,192.5],"cw":225}},
   "Longsword": {"strike":{"w":575,"r":525,"rec":850,"hrec":400,"t":[266,187],"cw":150},"stab":{"w":625,"r":350,"rec":850,"hrec":400,"t":[299,209],"cw":200},"altStrike":{"w":540,"r":500,"rec":700,"hrec":400,"t":[275,192.5],"cw":200},"altStab":{"w":550,"r":350,"rec":700,"hrec":400,"t":[312.5,218.75],"cw":225}},
-  "Bardiche": {"strike":{"w":600,"r":500,"rec":900,"hrec":300,"t":[257,180],"cw":175},"stab":{"w":625,"r":350,"rec":900,"hrec":300,"t":[289,202],"cw":250},"altStrike":{"w":675,"r":475,"rec":1000,"hrec":300,"t":[257,180],"nc":true},"altStab":{"w":650,"r":325,"rec":1000,"hrec":300,"t":[263,184],"nc":true}},
+  "Bardiche": {"strike":{"w":585,"r":515,"rec":900,"hrec":300,"t":[257,180],"cw":175},"stab":{"w":625,"r":350,"rec":900,"hrec":300,"t":[289,202],"cw":250},"altStrike":{"w":675,"r":475,"rec":1000,"hrec":300,"t":[257,180],"nc":true},"altStab":{"w":650,"r":325,"rec":1000,"hrec":300,"t":[263,184],"nc":true}},
   "Bastard Sword": {"strike":{"w":525,"r":475,"rec":1000,"hrec":400,"t":[266,187],"cw":150},"stab":{"w":575,"r":325,"rec":1000,"hrec":400,"t":[299,209],"cw":225},"altStrike":{"w":525,"r":525,"rec":700,"hrec":400,"t":[287.5,201.25],"cw":150},"altStab":{"w":575,"r":350,"rec":700,"hrec":400,"t":[325,227.5],"cw":225}},
   "Spear": {"strike":{"w":600,"r":475,"rec":1100,"hrec":275,"t":[249,175],"nc":true},"stab":{"w":650,"r":350,"rec":1000,"hrec":275,"t":[252,176],"nc":true},"altStrike":{"w":575,"r":450,"rec":1000,"hrec":275,"t":[284,198],"cw":100},"altStab":{"w":575,"r":350,"rec":1000,"hrec":275,"t":[284,198],"cw":200}},
   "Eveningstar": {"strike":{"w":650,"r":500,"rec":1000,"hrec":400,"t":[245,171],"cw":175},"stab":{"w":625,"r":325,"rec":1000,"hrec":400,"t":[278,195],"cw":275},"altStrike":{"w":650,"r":450,"rec":900,"hrec":400,"t":[262.5,183.75],"cw":175},"altStab":{"w":675,"r":300,"rec":900,"hrec":400,"t":[275,192.5],"cw":275}},
